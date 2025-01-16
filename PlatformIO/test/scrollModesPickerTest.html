@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number Picker Test</title>
+  <style>
+
+#modesPickerScroller {
+  position: relative;
+  width: 40px;
+  height: 160px; 
+  font-size: 32px;   
+  text-align: center;
+  overflow: hidden;     
+}
+
+#modesPickerUpButton {
+  position: absolute;
+  top: 0px;
+  height: 40px;
+  left: 0px;
+  right: 0px;
+  background-color: white;
+  user-select: none; 
+  z-index: 1;
+}
+
+#modesPickerContainer {
+position: absolute;  
+ top: 20px;
+ left: 0px;
+ right: 0px;
+}
+
+.modesPickerContent {
+    position: relative;
+    height: 40px;
+    user-select: none;
+    vertical-align: top;
+}
+
+#modesPickerOverlay {
+    position: absolute;
+    top: 40px;
+  height: 80px;
+  left: 0px;
+  right: 0px;
+  background-image: linear-gradient(rgba(255, 255, 255, 1), rgba(255,255,255,0), rgba(255,255,255,1));
+  z-index: 1;
+}
+
+#modesPickerDownButton {
+  position: absolute;  
+  top: 120px;
+  height: 40px;
+  left: 0px;
+  right: 0px; 
+  background-color: white;  
+  user-select: none;
+  z-index: 1;     
+}
+  </style>
+</head>
+<body>
+
+<div id="modesPickerScroller">
+  <div id="modesPickerUpButton" onclick="handleModesPickerUpBtnClick()">˄</div>   
+    <div id="modesPickerContainer">      
+      <div class="modesPickerContent"> </div>                                                                                                
+      <object class="modesPickerContent" type="image/svg+xml" data="../data/dayTime.svg"></object>
+      <object class="modesPickerContent" type="image/svg+xml" data="../data/nightTime.svg"></object>        
+      <object class="modesPickerContent" type="image/svg+xml" data="../data/antiFreeze.svg"></object>
+      <div class="modesPickerContent"> </div>                                                     
+    </div>
+    <div id="modesPickerOverlay"></div>   
+  <div id="modesPickerDownButton" onclick="handleModesPickerDownBtnClick()">˅</div>     
+</div>
+
+
+<script>
+  modesPickerNumber=0;
+  modesPickerElement = document.getElementById("modesPickerContainer");
+  modesPickerElement.style.transition="all 0.5s";
+  function handleModesPickerUpBtnClick() {
+    modesPickerNumber++;
+    if (modesPickerNumber>2) modesPickerNumber=2;
+    modesPickerElement.style.transform="translateY(" + (-40*modesPickerNumber) + "px)";
+  }
+  function handleModesPickerDownBtnClick() {
+    modesPickerNumber--;
+    if (modesPickerNumber<0) modesPickerNumber=0;
+    modesPickerElement.style.transform="translateY(" + (-40*modesPickerNumber) + "px)";
+  }  
+</script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number Picker Test</title>
+  <style>
+
+#daysPickerScroller {
+  position: relative;
+  width: 150px;
+  height: 160px; 
+  font-size: 32px;   
+  text-align: center;
+  overflow: hidden;     
+}
+
+#daysPickerUpButton {
+  position: absolute;
+  top: 0px;
+  height: 40px;
+  left: 0px;
+  right: 0px;
+  background-color: white;
+  user-select: none; 
+  z-index: 1;
+}
+
+#daysPickerContainer {
+position: absolute;  
+ top: 20px;
+ left: 0px;
+ right: 0px;
+}
+
+.daysPickerContent {
+  position: relative;
+  height: 40px;
+  user-select: none;
+}
+
+#daysPickerOverlay {
+  position: absolute;
+  top: 40px;
+  height: 80px;
+  left: 0px;
+  right: 0px;
+  background-image: linear-gradient(rgba(255, 255, 255, 1), rgba(255,255,255,0), rgba(255,255,255,1));
+  z-index: 1;
+}
+
+#daysPickerDownButton {
+  position: absolute;  
+  top: 120px;
+  height: 40px;
+  left: 0px;
+  right: 0px; 
+  background-color: white;  
+  user-select: none;
+  z-index: 1;     
+}
+  </style>
+</head>
+<body>
+
+<div id="daysPickerScroller">
+  <div id="daysPickerUpButton" onclick="handleDaysPickerUpBtnClick()">˄</div>   
+    <div id="daysPickerContainer">      
+      <div class="daysPickerContent"> </div>
+      <div class="daysPickerContent">Monday</div>
+      <div class="daysPickerContent">Tuesday</div>
+      <div class="daysPickerContent">Wednesday</div>
+      <div class="daysPickerContent">Thursday</div>
+      <div class="daysPickerContent">Friday</div>
+      <div class="daysPickerContent">Saturday</div>
+      <div class="daysPickerContent">Sunday</div>
+      <div class="daysPickerContent"> </div>                                                
+    </div>
+    <div id="daysPickerOverlay"></div>   
+  <div id="daysPickerDownButton" onclick="handleDaysPickerDownBtnClick()">˅</div>     
+</div>
+
+
+<script>
+  daysPickerNumber=0;
+  daysPickerElement = document.getElementById("daysPickerContainer");
+  daysPickerElement.style.transition="all 0.5s";
+  function handleDaysPickerUpBtnClick() {
+    daysPickerNumber++;
+    if (daysPickerNumber>6) daysPickerNumber=6;
+    daysPickerElement.style.transform="translateY(" + (-40*daysPickerNumber) + "px)";
+  }
+  function handleDaysPickerDownBtnClick() {
+    daysPickerNumber--;
+    if (daysPickerNumber<0) daysPickerNumber=0;
+    daysPickerElement.style.transform="translateY(" + (-40*daysPickerNumber) + "px)";
+  }  
+</script>
+</body>
+</html>

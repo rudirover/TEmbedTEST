@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number Picker Test</title>
+  <style>
+
+#hoursPickerScroller {
+  position: relative;
+  width: 50px;
+  height: 160px; 
+  font-size: 32px;   
+  text-align: center;
+  overflow: hidden;     
+}
+
+#hoursPickerUpButton {
+  position: absolute;
+  top: 0px;
+  height: 40px;
+  left: 0px;
+  right: 0px;
+  background-color: white;
+  user-select: none; 
+  z-index: 1;
+}
+
+#hoursPickerContainer {
+position: absolute;  
+ top: 20px;
+ left: 0px;
+ right: 0px;
+}
+
+.hoursPickerContent {
+  position: relative;
+  height: 40px;
+  user-select: none;
+}
+
+#hoursPickerOverlay {
+  position: absolute;
+  top: 40px;
+  height: 80px;
+  left: 0px;
+  right: 0px;
+  background-image: linear-gradient(rgba(255, 255, 255, 1), rgba(255,255,255,0), rgba(255,255,255,1));
+  z-index: 1;
+}
+
+#hoursPickerDownButton {
+  position: absolute;  
+  top: 120px;
+  height: 40px;
+  left: 0px;
+  right: 0px; 
+  background-color: white;  
+  user-select: none;
+  z-index: 1;     
+}
+  </style>
+</head>
+<body>
+
+<div id="hoursPickerScroller">
+  <div id="hoursPickerUpButton" onclick="handleHoursPickerUpBtnClick()">˄</div>   
+    <div id="hoursPickerContainer">      
+      <div class="hoursPickerContent"> </div>
+      <div class="hoursPickerContent">00</div>
+      <div class="hoursPickerContent">01</div>
+      <div class="hoursPickerContent">02</div>
+      <div class="hoursPickerContent">03</div>
+      <div class="hoursPickerContent">04</div>
+      <div class="hoursPickerContent">05</div>
+      <div class="hoursPickerContent">06</div>
+      <div class="hoursPickerContent">07</div>
+      <div class="hoursPickerContent">08</div>
+      <div class="hoursPickerContent">09</div>
+      <div class="hoursPickerContent">10</div>
+      <div class="hoursPickerContent">11</div>
+      <div class="hoursPickerContent">12</div>
+      <div class="hoursPickerContent">13</div>
+      <div class="hoursPickerContent">14</div>
+      <div class="hoursPickerContent">15</div>
+      <div class="hoursPickerContent">16</div>
+      <div class="hoursPickerContent">17</div>
+      <div class="hoursPickerContent">18</div>
+      <div class="hoursPickerContent">19</div>
+      <div class="hoursPickerContent">20</div>
+      <div class="hoursPickerContent">21</div>
+      <div class="hoursPickerContent">22</div>
+      <div class="hoursPickerContent">23</div>                                                                                                      
+      <div class="hoursPickerContent"> </div>                                                
+    </div>
+    <div id="hoursPickerOverlay"></div>   
+  <div id="hoursPickerDownButton" onclick="handleHoursPickerDownBtnClick()">˅</div>     
+</div>
+
+
+<script>
+  hoursPickerNumber=0;
+  hoursPickerElement = document.getElementById("hoursPickerContainer");
+  hoursPickerElement.style.transition="all 0.5s";
+  function handleHoursPickerUpBtnClick() {
+    hoursPickerNumber++;
+    if (hoursPickerNumber>23) hoursPickerNumber=23;
+    hoursPickerElement.style.transform="translateY(" + (-40*hoursPickerNumber) + "px)";
+  }
+  function handleHoursPickerDownBtnClick() {
+    hoursPickerNumber--;
+    if (hoursPickerNumber<0) hoursPickerNumber=0;
+    hoursPickerElement.style.transform="translateY(" + (-40*hoursPickerNumber) + "px)";
+  }  
+</script>
+</body>
+</html>

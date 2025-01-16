@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <meta name="viewport" content="width=720px, initial-scale=0.5, shrink-to-fit=no">
+    
+    <title>rh-technics</title>
+
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet"> 
+
+<link rel="stylesheet" href="style.css"></style>
+<script src="script.js"></script>
+
+</head>
+<body id="bodyStyle">
+  <div id="header">RH - THERMOSTAT</div>
+  <div id="content">
+    <div id="currentValues">
+      <div id="currentValuesContainer">
+		    <div id="currentTemperatureItemText">21.5 °C</div>
+		    <div id="currentHumidityItemText">89 %rh</div>		
+	    </div>
+    </div>
+
+
+    <div id="selectMode">
+	    <div id="selectModeContainer">
+		    <div id="selectDayTimeItem" onclick="handleModeClick('appMode1')">
+			    <object id="selectDayTimeItemImage" type="image/svg+xml" data="assets/dayTime.svg"  style="pointer-events:none"></object>
+		    </div>
+		    <div id="selectNightTimeItem" onclick="handleModeClick('appMode2')">
+			    <object id="selectNightTimeItemImage" type="image/svg+xml" data="assets/nightTime.svg"  style="pointer-events:none"></object>
+		    </div>  
+		    <div id="selectAntiFreezeItem" onclick="handleModeClick('appMode3')">
+			    <object id="selectAntiFreezeItemImage" type="image/svg+xml" data="assets/antiFreeze.svg"  style="pointer-events:none"></object>
+		    </div> 
+		    <div id="selectClockModeItem" onclick="handleModeClick('appMode4')">
+			    <object id="selectClockModeItemImage" type="image/svg+xml" data="assets/clockMode.svg"  style="pointer-events:none"></object>
+		    </div>      
+      </div>  
+    </div>
+
+
+    <div id="setDayTime">
+      <div id="setDayTimeContainer">
+        <div id="setDayTimeItem">
+          <object id="setDayTimeItemImage" type="image/svg+xml" data="assets/dayTime.svg"></object>
+        </div>
+      <input id="setDayTimeItemSlider" type="range" min="50" max="300" step="5" class="slider" onInput="handleSliderInput('dayTime', this.value)" onChange="handleSliderChange('dayTime', this.value)"></input>
+      <div id="setDayTimeItemText">20.5 °C</div>  
+      </div>
+    </div>
+
+
+    <div id="setNightTime">
+    <div id="setNightTimeContainer">
+      <div id="setNightTimeItem">
+        <object id="setNightTimeItemImage" type="image/svg+xml" data="assets/nightTime.svg"></object>
+      </div>
+      <input id="setNightTimeItemSlider" type="range" min="50" max="300" step="5" class="slider" onInput="handleSliderInput('nightTime', this.value)" onChange="handleSliderChange('nightTime', this.value)"></input>
+      <div id="setNightTimeItemText">20.5 °C</div>   
+    </div>  
+    </div>
+
+
+    <div id="setAntiFreeze">
+    <div id="setAntiFreezeContainer">
+      <div id="setAntiFreezeItem">
+        <object id="setAntiFreezeItemImage" type="image/svg+xml" data="assets/antiFreeze.svg"></object>
+      </div>
+      <input id="setAntiFreezeItemSlider" type="range" min="50" max="300" step="5" class="slider" onInput="handleSliderInput('antiFreeze', this.value)" onChange="handleSliderChange('antiFreeze', this.value)"></input>
+      <div id="setAntiFreezeItemText">20.5 °C</div>  
+    </div>    
+    </div>
+
+
+    <div id="setClockTable">
+    <div id="setClockTableContainer">
+      <div id="setClockTableItem">
+        <object id="setClockTableItemImage" type="image/svg+xml" data="assets/clockMode.svg"></object>
+      </div>
+      <div id="setClockTableItemText">Clock Table List</div>     
+      <div id="setClockTableItem" onclick="handleClockTableDrop('')">
+        <object id="setClockTableItemDrop" type="image/svg+xml" data="assets/expandSign.svg" style="pointer-events:none"></object>
+      </div>  
+    </div>
+    </div>
+  </div>
+  
+  <div id="footer">Wed 20 Dec 2023 - 13:46</div>
+
+  <div id="popupClockTableEntry"></div>
+  <div id="addClockTableEntry">
+    <div id="addClockTableEntryContainer">
+      <div></div>
+      <div id="daysPickerScroller">
+        <div id="daysPickerUpButton" onclick="handleDaysPickerUpBtnClick()">˄</div>   
+          <div id="daysPickerContainer">      
+            <div class="daysPickerContent"> </div>
+            <div class="daysPickerContent">Monday</div>
+            <div class="daysPickerContent">Tuesday</div>
+            <div class="daysPickerContent">Wednesday</div>
+            <div class="daysPickerContent">Thursday</div>
+            <div class="daysPickerContent">Friday</div>
+            <div class="daysPickerContent">Saturday</div>
+            <div class="daysPickerContent">Sunday</div>
+            <div class="daysPickerContent"> </div>                                                
+          </div>
+          <div id="daysPickerOverlay"></div>   
+        <div id="daysPickerDownButton" onclick="handleDaysPickerDownBtnClick()">˅</div>     
+      </div>
+      <div></div>
+      <div id="hoursPickerScroller">
+        <div id="hoursPickerUpButton" onclick="handleHoursPickerUpBtnClick()">˄</div>   
+          <div id="hoursPickerContainer">      
+            <div class="hoursPickerContent"> </div>
+            <div class="hoursPickerContent">00</div>
+            <div class="hoursPickerContent">01</div>
+            <div class="hoursPickerContent">02</div>
+            <div class="hoursPickerContent">03</div>
+            <div class="hoursPickerContent">04</div>
+            <div class="hoursPickerContent">05</div>
+            <div class="hoursPickerContent">06</div>
+            <div class="hoursPickerContent">07</div>
+            <div class="hoursPickerContent">08</div>
+            <div class="hoursPickerContent">09</div>
+            <div class="hoursPickerContent">10</div>
+            <div class="hoursPickerContent">11</div>
+            <div class="hoursPickerContent">12</div>
+            <div class="hoursPickerContent">13</div>
+            <div class="hoursPickerContent">14</div>
+            <div class="hoursPickerContent">15</div>
+            <div class="hoursPickerContent">16</div>
+            <div class="hoursPickerContent">17</div>
+            <div class="hoursPickerContent">18</div>
+            <div class="hoursPickerContent">19</div>
+            <div class="hoursPickerContent">20</div>
+            <div class="hoursPickerContent">21</div>
+            <div class="hoursPickerContent">22</div>
+            <div class="hoursPickerContent">23</div>                                                                                                      
+            <div class="hoursPickerContent"> </div>                                                
+          </div>
+          <div id="hoursPickerOverlay"></div>   
+        <div id="hoursPickerDownButton" onclick="handleHoursPickerDownBtnClick()">˅</div>     
+      </div> 
+      <div style="text-align: center">:</div>           
+      <div id="minutesPickerScroller">
+        <div id="minutesPickerUpButton" onclick="handleMinutesPickerUpBtnClick()">˄</div>   
+          <div id="minutesPickerContainer">      
+            <div class="minutesPickerContent"> </div>
+            <div class="minutesPickerContent">00</div>
+            <div class="minutesPickerContent">05</div>
+            <div class="minutesPickerContent">10</div>
+            <div class="minutesPickerContent">15</div>
+            <div class="minutesPickerContent">20</div>
+            <div class="minutesPickerContent">25</div>
+            <div class="minutesPickerContent">30</div>
+            <div class="minutesPickerContent">35</div>
+            <div class="minutesPickerContent">40</div>
+            <div class="minutesPickerContent">45</div>
+            <div class="minutesPickerContent">50</div>
+            <div class="minutesPickerContent">55</div>                                                                                                     
+            <div class="minutesPickerContent"> </div>                                                
+          </div>
+          <div id="minutesPickerOverlay"></div>   
+        <div id="minutesPickerDownButton" onclick="handleMinutesPickerDownBtnClick()">˅</div>     
+      </div>
+      <div></div>  
+      <div id="modesPickerScroller">
+        <div id="modesPickerUpButton" onclick="handleModesPickerUpBtnClick()">˄</div>   
+          <div id="modesPickerContainer">      
+            <div class="modesPickerContent"> </div>                                                                                                
+            <object class="modesPickerContent" type="image/svg+xml" data="assets/dayTime.svg"></object>
+            <object class="modesPickerContent" type="image/svg+xml" data="assets/nightTime.svg"></object>        
+            <object class="modesPickerContent" type="image/svg+xml" data="assets/antiFreeze.svg"></object>
+            <div class="modesPickerContent"> </div>                                                     
+          </div>
+          <div id="modesPickerOverlay"></div>   
+        <div id="modesPickerDownButton" onclick="handleModesPickerDownBtnClick()">˅</div>     
+      </div>             
+    </div>
+  </div>
+</body>
+</html>
+

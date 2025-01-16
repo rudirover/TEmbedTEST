@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number Picker Test</title>
+  <style>
+
+#minutesPickerScroller {
+  position: relative;
+  width: 50px;
+  height: 160px; 
+  font-size: 32px;   
+  text-align: center;
+  overflow: hidden;     
+}
+
+#minutesPickerUpButton {
+  position: absolute;
+  top: 0px;
+  height: 40px;
+  left: 0px;
+  right: 0px;
+  background-color: white;
+  user-select: none; 
+  z-index: 1;
+}
+
+#minutesPickerContainer {
+position: absolute;  
+ top: 20px;
+ left: 0px;
+ right: 0px;
+}
+
+.minutesPickerContent {
+  position: relative;
+  height: 40px;
+  user-select: none;
+}
+
+#minutesPickerOverlay {
+  position: absolute;
+  top: 40px;
+  height: 80px;
+  left: 0px;
+  right: 0px;
+  background-image: linear-gradient(rgba(255, 255, 255, 1), rgba(255,255,255,0), rgba(255,255,255,1));
+  z-index: 1;
+}
+
+#minutesPickerDownButton {
+  position: absolute;  
+  top: 120px;
+  height: 40px;
+  left: 0px;
+  right: 0px; 
+  background-color: white;  
+  user-select: none;
+  z-index: 1;     
+}
+  </style>
+</head>
+<body>
+
+<div id="minutesPickerScroller">
+  <div id="minutesPickerUpButton" onclick="handleMinutesPickerUpBtnClick()">˄</div>   
+    <div id="minutesPickerContainer">      
+      <div class="minutesPickerContent"> </div>
+      <div class="minutesPickerContent">00</div>
+      <div class="minutesPickerContent">05</div>
+      <div class="minutesPickerContent">10</div>
+      <div class="minutesPickerContent">15</div>
+      <div class="minutesPickerContent">20</div>
+      <div class="minutesPickerContent">25</div>
+      <div class="minutesPickerContent">30</div>
+      <div class="minutesPickerContent">35</div>
+      <div class="minutesPickerContent">40</div>
+      <div class="minutesPickerContent">45</div>
+      <div class="minutesPickerContent">50</div>
+      <div class="minutesPickerContent">55</div>                                                                                                     
+      <div class="minutesPickerContent"> </div>                                                
+    </div>
+    <div id="minutesPickerOverlay"></div>   
+  <div id="minutesPickerDownButton" onclick="handleMinutesPickerDownBtnClick()">˅</div>     
+</div>
+
+
+<script>
+  minutesPickerNumber=0;
+  minutesPickerElement = document.getElementById("minutesPickerContainer");
+  minutesPickerElement.style.transition="all 0.5s";
+  function handleMinutesPickerUpBtnClick() {
+    minutesPickerNumber++;
+    if (minutesPickerNumber>11) minutesPickerNumber=11;
+    minutesPickerElement.style.transform="translateY(" + (-40*minutesPickerNumber) + "px)";
+  }
+  function handleMinutesPickerDownBtnClick() {
+    minutesPickerNumber--;
+    if (minutesPickerNumber<0) minutesPickerNumber=0;
+    minutesPickerElement.style.transform="translateY(" + (-40*minutesPickerNumber) + "px)";
+  }  
+</script>
+</body>
+</html>
