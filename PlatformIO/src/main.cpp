@@ -2,7 +2,7 @@
 
 
   static const uint16_t screenWidth  = 170;
-  static const uint16_t screenHeight = 320; //Tft.height();
+  static const uint16_t screenHeight = 320;
   static lv_disp_draw_buf_t draw_buf;
   static lv_color_t buf[ screenWidth * screenHeight / 10 ];  
   TFT_eSPI Tft = TFT_eSPI(screenWidth, screenHeight); // TFT instance  
@@ -14,8 +14,11 @@ void setup()
   Serial.begin(115200);
   Serial.println("***** T-Embed Board *****");
 
+
   // Print some info from TFT_eSPI
   Tft.init(); // don't forget to initialize TFT!!!
+  
+  /*
   int x= Tft.width();
   int y=Tft.height();
   Serial.print("Width  X=");
@@ -24,12 +27,15 @@ void setup()
   Serial.println(y);
   Serial.println("");
 
+/*
+
   // Trying to do something with lvgl with succes now!
   String LVGL_Arduino = "Hello Arduino! ";
   LVGL_Arduino += String('V') + lv_version_major() + "." + lv_version_minor() + "." + lv_version_patch();
 
   Serial.println( LVGL_Arduino );
   Serial.println( "I am LVGL_Arduino" );
+
 
   // Initialize the display
   lv_init();
@@ -95,13 +101,16 @@ void setup()
   lv_label_set_text(label2, "Goodbye");
 
   lv_scr_load(screenMain);  
+  */
+  
 }
 
  
 void loop()
 {
-  lv_timer_handler(); /* let the GUI do its work */
-  delay( 100 );
+    Serial.println("***** T-Embed Board *****");
+  //lv_timer_handler(); /* let the GUI do its work */
+  delay( 1000 );
 }
 
 
@@ -111,6 +120,7 @@ void setBackLightLevel(byte level)
     analogWrite(TFT_BL, level);
 }
 */
+
 
 /* Display flushing */
 void my_disp_flush( lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p )
