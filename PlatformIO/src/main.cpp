@@ -11,14 +11,21 @@
 void setup()
 {
   // put your setup code here, to run once:
+
+  pinMode(POWER_ON, OUTPUT);
+  digitalWrite(POWER_ON, HIGH);
+
   Serial.begin(115200);
   Serial.println("***** T-Embed Board *****");
+
+  setBackLightLevel(255);
 
 
   // Print some info from TFT_eSPI
   Tft.init(); // don't forget to initialize TFT!!!
+  //Tft.setRotation(3);
   
-  /*
+  
   int x= Tft.width();
   int y=Tft.height();
   Serial.print("Width  X=");
@@ -27,7 +34,7 @@ void setup()
   Serial.println(y);
   Serial.println("");
 
-/*
+
 
   // Trying to do something with lvgl with succes now!
   String LVGL_Arduino = "Hello Arduino! ";
@@ -47,9 +54,12 @@ void setup()
   // Change the following line to your display resolution
   disp_drv.hor_res = screenWidth;
   disp_drv.ver_res = screenHeight;
+  disp_drv.rotated = LV_DISP_ROT_90;
+  disp_drv.sw_rotate = 1;
   disp_drv.flush_cb = my_disp_flush;
   disp_drv.draw_buf = &draw_buf;
   lv_disp_drv_register( &disp_drv );
+
 
   //Create screen objects
   lv_obj_t *temperatureBtn; 
@@ -68,9 +78,10 @@ void setup()
 
   temperatureBtn = lv_btn_create(screenMain);
   //lv_obj_add_event_cb(btn1, event_handler_btn);
-  lv_obj_set_width(temperatureBtn, 230);
-  lv_obj_set_height(temperatureBtn, 64);
-  lv_obj_set_pos(temperatureBtn, 5, 5);  
+  lv_obj_set_size(temperatureBtn, 300, 64);
+  //lv_obj_set_width(temperatureBtn, 200);
+  //lv_obj_set_height(temperatureBtn, 64);
+  lv_obj_set_pos(temperatureBtn, 10, 0);  
 
 
   temperatureLabel = lv_label_create(temperatureBtn);
@@ -78,14 +89,15 @@ void setup()
   lv_label_set_long_mode(temperatureLabel, LV_LABEL_LONG_DOT);
   lv_label_set_text(temperatureLabel, "20.3 °C");
   lv_obj_set_style_text_align(temperatureLabel, LV_TEXT_ALIGN_CENTER, 0);
-  lv_obj_set_size(temperatureLabel, 230, 64);
+  lv_obj_set_size(temperatureLabel, 300, 64);
   lv_obj_set_pos(temperatureLabel, 0, 0);
 
   btn1 = lv_btn_create(screenMain);
   //lv_obj_add_event_cb(btn1, event_handler_btn);
-  lv_obj_set_width(btn1, 70);
-  lv_obj_set_height(btn1, 32);
-  lv_obj_set_pos(btn1, 32, 170);
+  //lv_obj_set_width(btn1, 70);
+  //lv_obj_set_height(btn1, 32);
+  lv_obj_set_size(btn1,70, 32);
+  lv_obj_set_pos(btn1, 32, 100);
 
   lv_obj_t * label1 = lv_label_create(btn1);
   lv_label_set_text(label1, "Hello");
@@ -93,33 +105,32 @@ void setup()
 
   btn2 = lv_btn_create(screenMain);
   //lv_obj_add_event_cb(btn2, event_handler_btn);
-  lv_obj_set_width(btn2, 70);
-  lv_obj_set_height(btn2, 32);
-  lv_obj_set_pos(btn2, 142, 170);
+  //lv_obj_set_width(btn2, 70);
+  //lv_obj_set_height(btn2, 32);
+  lv_obj_set_size(btn2,70, 32);
+  lv_obj_set_pos(btn2, 142, 100);
 
   lv_obj_t * label2 = lv_label_create(btn2);
   lv_label_set_text(label2, "Goodbye");
 
   lv_scr_load(screenMain);  
-  */
-  
 }
 
  
 void loop()
 {
     Serial.println("***** T-Embed Board *****");
-  //lv_timer_handler(); /* let the GUI do its work */
-  delay( 1000 );
+    lv_timer_handler(); /* let the GUI do its work */
+    delay( 100 );
 }
 
 
-/*
+
 void setBackLightLevel(byte level)
 {
     analogWrite(TFT_BL, level);
 }
-*/
+
 
 
 /* Display flushing */
