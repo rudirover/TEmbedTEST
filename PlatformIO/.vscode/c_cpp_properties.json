@@ -9,6 +9,8 @@
             "name": "PlatformIO",
             "includePath": [
                 "c:/Users/Rudi Hacquaert/Projects/Thermostat/TEmbededTEST/PlatformIO/src",
+                "c:/Users/Rudi Hacquaert/Projects/Thermostat/TEmbededTEST/PlatformIO/.pio/libdeps/lilygo-t-display-s3/OneButton/src",
+                "c:/Users/Rudi Hacquaert/Projects/Thermostat/TEmbededTEST/PlatformIO/.pio/libdeps/lilygo-t-display-s3/RotaryEncoder/src",
                 "c:/Users/Rudi Hacquaert/Projects/Thermostat/TEmbededTEST/PlatformIO/.pio/libdeps/lilygo-t-display-s3/lvgl",
                 "c:/Users/Rudi Hacquaert/Projects/Thermostat/TEmbededTEST/PlatformIO/.pio/libdeps/lilygo-t-display-s3/lvgl/src",
                 "c:/Users/Rudi Hacquaert/Projects/Thermostat/TEmbededTEST/PlatformIO/.pio/libdeps/lilygo-t-display-s3/TFT_eSPI",
@@ -247,6 +249,8 @@
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
                     "c:/Users/Rudi Hacquaert/Projects/Thermostat/TEmbededTEST/PlatformIO/src",
+                    "c:/Users/Rudi Hacquaert/Projects/Thermostat/TEmbededTEST/PlatformIO/.pio/libdeps/lilygo-t-display-s3/OneButton/src",
+                    "c:/Users/Rudi Hacquaert/Projects/Thermostat/TEmbededTEST/PlatformIO/.pio/libdeps/lilygo-t-display-s3/RotaryEncoder/src",
                     "c:/Users/Rudi Hacquaert/Projects/Thermostat/TEmbededTEST/PlatformIO/.pio/libdeps/lilygo-t-display-s3/lvgl",
                     "c:/Users/Rudi Hacquaert/Projects/Thermostat/TEmbededTEST/PlatformIO/.pio/libdeps/lilygo-t-display-s3/lvgl/src",
                     "c:/Users/Rudi Hacquaert/Projects/Thermostat/TEmbededTEST/PlatformIO/.pio/libdeps/lilygo-t-display-s3/TFT_eSPI",
