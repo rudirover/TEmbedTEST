@@ -123,6 +123,13 @@ void guiLoop() {
         ui_tick();
     }
     loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);
+
+    startTime=millis();
+    while((millis() - startTime) < 5000) {
+        lv_timer_handler();  
+        ui_tick();
+    }
+    loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);    
 }
 
 

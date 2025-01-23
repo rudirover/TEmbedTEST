@@ -9,24 +9,45 @@ extern "C" {
 
 typedef struct _objects_t {
     lv_obj_t *info_page;
+    lv_obj_t *temp_page;
     lv_obj_t *wifi_page;
+    lv_obj_t *wifi_ssid_drop_down;
     lv_obj_t *obj0;
     lv_obj_t *obj1;
     lv_obj_t *obj2;
+    lv_obj_t *infopage_label;
     lv_obj_t *obj3;
     lv_obj_t *obj4;
     lv_obj_t *obj5;
+    lv_obj_t *setpoint_temp_arc;
+    lv_obj_t *setpoint_label;
+    lv_obj_t *setpoint_temp_arc_1;
+    lv_obj_t *actual_label;
+    lv_obj_t *temperatures_label;
+    lv_obj_t *setpoint_text;
+    lv_obj_t *actual_text;
+    lv_obj_t *obj6;
+    lv_obj_t *obj7;
+    lv_obj_t *obj8;
+    lv_obj_t *wificonnection_label;
+    lv_obj_t *wifi_ssid_label;
+    lv_obj_t *wifi_pass_label;
+    lv_obj_t *wifi_pass_text;
 } objects_t;
 
 extern objects_t objects;
 
 enum ScreensEnum {
     SCREEN_ID_INFO_PAGE = 1,
-    SCREEN_ID_WIFI_PAGE = 2,
+    SCREEN_ID_TEMP_PAGE = 2,
+    SCREEN_ID_WIFI_PAGE = 3,
 };
 
 void create_screen_info_page();
 void tick_screen_info_page();
+
+void create_screen_temp_page();
+void tick_screen_temp_page();
 
 void create_screen_wifi_page();
 void tick_screen_wifi_page();
