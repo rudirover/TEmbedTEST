@@ -1,5 +1,7 @@
 #include "main.h"
 
+static TaskHandle_t  guiTaskHandler;
+
 void setup()
 {
   // Init serial port
@@ -8,13 +10,13 @@ void setup()
   Serial.println("***** T-Embed Board *****"); 
   Serial.println("*************************");      
 
-  guiSetup();    
+  xTaskCreate(guiTask, "guiTask", 16384, NULL, 10, &guiTaskHandler);    
 }
 
  
 void loop()
 {
-    guiLoop();
+    delay(1000);
 }
 
 

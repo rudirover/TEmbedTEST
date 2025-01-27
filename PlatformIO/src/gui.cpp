@@ -34,7 +34,7 @@ lcd_cmd_t lcd_st7789v[] = {
     {0xE1, {0XF0, 0X08, 0X0C, 0X0B, 0X09, 0X24, 0X2B, 0X22, 0X43, 0X38, 0X15, 0X16, 0X2F, 0X37}, 14},
 };
 
-void guiSetup() {
+void guiTask(void *param) {
 
   // Turn on lcd
   pinMode(POWER_ON, OUTPUT);
@@ -106,32 +106,23 @@ void guiSetup() {
   */     
 
   ui_init();
-}
 
-
-void guiLoop() {
-    int startTime=millis();
-    while((millis() - startTime) < 5000) {
-        lv_timer_handler();  
-        ui_tick();
-    }
+  while(true) {
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
     loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT);    
-
-    startTime=millis();
-    while((millis() - startTime) < 5000) {
-        lv_timer_handler();  
-        ui_tick();
-    }
+ 
+    ui_tick();
+    lv_timer_handler();    
+    vTaskDelay(2000 / portTICK_PERIOD_MS);    
     loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);
 
-    startTime=millis();
-    while((millis() - startTime) < 5000) {
-        lv_timer_handler();  
-        ui_tick();
-    }
+    ui_tick();
+    lv_timer_handler();    
+    vTaskDelay(2000 / portTICK_PERIOD_MS);    
     loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);    
-}
 
+  }
+}
 
 
 void setBackLightLevel(byte level)

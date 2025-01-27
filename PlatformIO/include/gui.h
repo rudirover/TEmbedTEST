@@ -7,6 +7,7 @@
 #include <RotaryEncoder.h>
 #include <OneButton.h>
 #include "ui.h"
+#include "task.h"
 
 #define POWER_ON 46
 #define PIN_ENCODE_A          2
@@ -16,8 +17,8 @@
 #define SCREENWIDTH 170;
 #define SCREENHEIGHT 320;
 
-void guiSetup();
-void guiLoop();
+void guiTask(void *param);
+
 
 //void readEncoder(lv_indev_drv_t * indev_drv, lv_indev_data_t * data);
 void setBackLightLevel(byte level);
