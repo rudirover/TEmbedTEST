@@ -1,18 +1,18 @@
 #include "gui.h"
-#include "ui.h"
-#include <lvgl.h>
 
-lv_color_t *buf1[ SCREENWIDTH * SCREENHEIGHT];
-//lv_color_t *buf2[ SCREENWIDTH * SCREENHEIGHT];   
-TFT_eSPI Tft = TFT_eSPI(SCREENWIDTH, SCREENHEIGHT); // TFT instance 
+
+TFT_eSPI Tft = TFT_eSPI(SCREENWIDTH, SCREENHEIGHT); // TFT instance
+RotaryEncoder Encoder = RotaryEncoder(PIN_ENCODE_A, PIN_ENCODE_B);
+
+lv_color_t *buf1[ SCREENWIDTH * SCREENHEIGHT]; 
 lv_disp_draw_buf_t draw_buf;
 
-unsigned long lastTickMillis = 0;
 SemaphoreHandle_t guiMutex;
 unsigned int screenTimer;
 
 unsigned int newGuiState = INFOPAGE_STATE;
 unsigned int oldGuiState = NONE_STATE;
+int guiState = INFOPAGE_STATE;
 
 #define SCREENTIME 2500
 
@@ -80,21 +80,55 @@ void guiTask(void *param) {
       xSemaphoreGive(guiMutex);
     }
 
+/*
+    //**************************************************************************
+    //* Demo Running between screens                                          
+    //**************************************************************************
     if(millis() - screenTimer > SCREENTIME) {
       screenTimer=millis();
       newGuiState++;
       if(newGuiState > WIFIPAGE_STATE) newGuiState=INFOPAGE_STATE;
+    }
 
-      if(newGuiState != oldGuiState){
-        if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){
-          switch (newGuiState) {
-            case 1: loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
-            case 2: loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
-            case 3: loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
-          }
-          xSemaphoreGive(guiMutex);
-          oldGuiState = newGuiState;
-        }      
+    if(newGuiState != oldGuiState){
+      if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){
+        switch (newGuiState) {
+          case INFOPAGE_STATE: loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
+          case TEMPPAGE_STATE: loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
+          case WIFIPAGE_STATE: loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
+        }
+        xSemaphoreGive(guiMutex);
+        oldGuiState = newGuiState;
+      }   
+    }
+    //**************************************************************************
+*/
+    Encoder.tick();
+
+    RotaryEncoder::Direction direction=Encoder.getDirection();
+    if(direction == RotaryEncoder::Direction::CLOCKWISE){
+      guiState++;
+      if(guiState > WIFIPAGE_STATE) guiState=WIFIPAGE_STATE;
+      if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){      
+        switch(guiState){
+          case INFOPAGE_STATE: loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
+          case TEMPPAGE_STATE: loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
+          case WIFIPAGE_STATE: loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break;       
+        }
+        xSemaphoreGive(guiMutex); 
+      }
+    }
+
+    if(direction == RotaryEncoder::Direction::COUNTERCLOCKWISE){
+      guiState--;
+      if(guiState < INFOPAGE_STATE) guiState=INFOPAGE_STATE;
+      if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){               
+        switch(guiState){
+          case INFOPAGE_STATE: loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT); break; 
+          case TEMPPAGE_STATE: loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT); break; 
+          case WIFIPAGE_STATE: loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT); break;
+        }
+      xSemaphoreGive(guiMutex);       
       }
     }
   }
@@ -103,7 +137,7 @@ void guiTask(void *param) {
 
 void setBackLightLevel(byte level)
 {
-    analogWrite(15, level);
+    analogWrite(TFT_BL, level);
 }
 
 
@@ -113,22 +147,8 @@ void my_disp_flush( lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *colo
     uint32_t w = ( area->x2 - area->x1 + 1 );
     uint32_t h = ( area->y2 - area->y1 + 1 );
 
-    //Serial.println("Entering LVGL Callback.");
-    //Tft.startWrite();
-    Tft.setAddrWindow( area->x1, area->y1, w, h );
-    //long start = millis();    
+    Tft.setAddrWindow( area->x1, area->y1, w, h );    
     Tft.pushColors( ( uint16_t * )&color_p->full, w * h );
-    //Serial.printf("Execution Time = %lu mS\r\n",millis()-start);
-    //Serial.print("x1: ");
-    //Serial.print(area->x1);
-    //Serial.print("   y1: ");    
-    //Serial.println(area->y1);
-    //Serial.print("x2: ");
-    //Serial.print(area->x2);
-    //Serial.print("   y2: ");    
-    //Serial.println(area->y2);      
-    //Tft.endWrite();
 
-    lv_disp_flush_ready( disp );
-    //Serial.println("Leaving LVGL callback.");   
+    lv_disp_flush_ready( disp );  
 }
