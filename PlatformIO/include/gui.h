@@ -24,11 +24,13 @@ enum guiState{
     INFOPAGE_STATE,
     TEMPPAGE_STATE,
     WIFIPAGE_STATE,
-    WIFISSIDSEL_STATE};
+    WIFISSIDFOCUS_STATE,
+    WIFIPASSFOCUS_STATE};
 
 void guiTask(void *param);
 
 void buttonClicked();
+void buttonLongPressed();
 void readEncoder(RotaryEncoder::Direction direction);
 void setBackLightLevel(byte level);
 void my_disp_flush( lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p );

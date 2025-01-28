@@ -40,6 +40,7 @@ void guiTask(void *param) {
   Serial.println("");
 
   Button.attachClick(buttonClicked);
+  Button.attachLongPressStart(buttonLongPressed);
 
   // Trying to do something with lvgl with succes now!
   String LVGL_Arduino = "Hello Arduino! ";
@@ -48,7 +49,7 @@ void guiTask(void *param) {
   Serial.println( LVGL_Arduino );
   Serial.println( "I am LVGL_Arduino" );
 
-    guiMutex = xSemaphoreCreateMutex();
+  guiMutex = xSemaphoreCreateMutex();
 
   // Initialize the display
   lv_init();
@@ -115,60 +116,70 @@ void guiTask(void *param) {
 }
 
 void buttonClicked(){
-  //Serial.println("Button Clicked!");
-  switch (guiState){
-    case WIFIPAGE_STATE: 
-        lv_group_add_obj(groups.wifiPageGroup, objects.wifi_ssid_drop_down);
-        lv_group_add_obj(groups.wifiPageGroup, objects.wifi_pass_text);
-        guiState = WIFISSIDSEL_STATE;
+  if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){    
+    switch (guiState){
+      case WIFIPAGE_STATE: 
+          lv_group_add_obj(groups.wifiPageGroup, objects.wifi_ssid_drop_down);
+          lv_group_add_obj(groups.wifiPageGroup, objects.wifi_pass_text);
+          guiState = WIFISSIDFOCUS_STATE;
         break;
-  }
+    }
+    xSemaphoreGive(guiMutex);
+  }       
+}
+
+void buttonLongPressed(){
+  if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){  
+    switch (guiState){
+      case WIFISSIDFOCUS_STATE:
+      case WIFIPASSFOCUS_STATE: 
+        lv_group_remove_all_objs(groups.wifiPageGroup);
+        guiState = WIFIPAGE_STATE;
+        break;
+    }
+    xSemaphoreGive(guiMutex);
+  }      
 }
 
 
 void readEncoder(RotaryEncoder::Direction direction){
-  int state = guiState;
-  switch(guiState) {
+  if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){  
+    switch(guiState) {
     case INFOPAGE_STATE:
-      if(direction == RotaryEncoder::Direction::CLOCKWISE) state=TEMPPAGE_STATE;
+      if(direction == RotaryEncoder::Direction::CLOCKWISE){
+        guiState=TEMPPAGE_STATE;
+        loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);
+      }        
       break;
     case TEMPPAGE_STATE:
-      if(direction == RotaryEncoder::Direction::CLOCKWISE) state=WIFIPAGE_STATE;
-      if(direction == RotaryEncoder::Direction::COUNTERCLOCKWISE) state=INFOPAGE_STATE;
+      if(direction == RotaryEncoder::Direction::CLOCKWISE){
+        guiState=WIFIPAGE_STATE;
+        loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);
+      }
+      if(direction == RotaryEncoder::Direction::COUNTERCLOCKWISE){
+        guiState=INFOPAGE_STATE;
+        loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT); 
+      }       
       break;
     case WIFIPAGE_STATE:
-      if(direction == RotaryEncoder::Direction::COUNTERCLOCKWISE) state=TEMPPAGE_STATE; 
+      if(direction == RotaryEncoder::Direction::COUNTERCLOCKWISE){
+        guiState=TEMPPAGE_STATE;
+        loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT);
+      }         
       break;
-  }              
-
-  if(state != guiState){
-    guiState = state;
-
-    if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){      
-      switch(guiState){
-        case INFOPAGE_STATE: 
-          if(direction==RotaryEncoder::Direction::CLOCKWISE)
-            loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);
-          else
-            loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT);
-          break; 
-        case TEMPPAGE_STATE:
-          if(direction==RotaryEncoder::Direction::CLOCKWISE)
-            loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);
-          else
-            loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT);
-          break; 
-        case WIFIPAGE_STATE:
-          if(direction==RotaryEncoder::Direction::CLOCKWISE)
-            loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);
-          else
-            loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT);
-          break;       
-      }
-      xSemaphoreGive(guiMutex); 
+    case WIFISSIDFOCUS_STATE:
+      guiState=WIFIPASSFOCUS_STATE;
+      lv_group_focus_obj(objects.wifi_pass_text);
+      break;
+    case WIFIPASSFOCUS_STATE:
+      guiState=WIFISSIDFOCUS_STATE;
+      lv_group_focus_obj(objects.wifi_ssid_drop_down);
+      break;      
     }
+    xSemaphoreGive(guiMutex); 
   }
-}
+}              
+
 
 
 void setBackLightLevel(byte level)
