@@ -3,6 +3,7 @@
 
 TFT_eSPI Tft = TFT_eSPI(SCREENWIDTH, SCREENHEIGHT); // TFT instance
 RotaryEncoder Encoder = RotaryEncoder(PIN_ENCODE_A, PIN_ENCODE_B);
+OneButton Button =  OneButton(PIN_ENCODE_BTN);
 
 lv_color_t *buf1[ SCREENWIDTH * SCREENHEIGHT]; 
 lv_disp_draw_buf_t draw_buf;
@@ -10,11 +11,11 @@ lv_disp_draw_buf_t draw_buf;
 SemaphoreHandle_t guiMutex;
 unsigned int screenTimer;
 
-unsigned int newGuiState = INFOPAGE_STATE;
-unsigned int oldGuiState = NONE_STATE;
+//unsigned int newGuiState = INFOPAGE_STATE;
+//unsigned int oldGuiState = NONE_STATE;
 int guiState = INFOPAGE_STATE;
 
-#define SCREENTIME 2500
+//#define SCREENTIME 2500
 
 void guiTask(void *param) {
 
@@ -38,6 +39,7 @@ void guiTask(void *param) {
   Serial.println(y);
   Serial.println("");
 
+  Button.attachClick(buttonClicked);
 
   // Trying to do something with lvgl with succes now!
   String LVGL_Arduino = "Hello Arduino! ";
@@ -71,7 +73,7 @@ void guiTask(void *param) {
     xSemaphoreGive(guiMutex);  
   }
 
-  screenTimer = millis();
+  //screenTimer = millis();
 
   while(true) {
 
@@ -106,30 +108,64 @@ void guiTask(void *param) {
     Encoder.tick();
 
     RotaryEncoder::Direction direction=Encoder.getDirection();
-    if(direction == RotaryEncoder::Direction::CLOCKWISE){
-      guiState++;
-      if(guiState > WIFIPAGE_STATE) guiState=WIFIPAGE_STATE;
-      if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){      
-        switch(guiState){
-          case INFOPAGE_STATE: loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
-          case TEMPPAGE_STATE: loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
-          case WIFIPAGE_STATE: loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break;       
-        }
-        xSemaphoreGive(guiMutex); 
-      }
-    }
+    if(direction != RotaryEncoder::Direction::NOROTATION) readEncoder(direction);
 
-    if(direction == RotaryEncoder::Direction::COUNTERCLOCKWISE){
-      guiState--;
-      if(guiState < INFOPAGE_STATE) guiState=INFOPAGE_STATE;
-      if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){               
-        switch(guiState){
-          case INFOPAGE_STATE: loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT); break; 
-          case TEMPPAGE_STATE: loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT); break; 
-          case WIFIPAGE_STATE: loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT); break;
-        }
-      xSemaphoreGive(guiMutex);       
+    Button.tick();
+  }
+}
+
+void buttonClicked(){
+  //Serial.println("Button Clicked!");
+  switch (guiState){
+    case WIFIPAGE_STATE: 
+        lv_group_add_obj(groups.wifiPageGroup, objects.wifi_ssid_drop_down);
+        lv_group_add_obj(groups.wifiPageGroup, objects.wifi_pass_text);
+        guiState = WIFISSIDSEL_STATE;
+        break;
+  }
+}
+
+
+void readEncoder(RotaryEncoder::Direction direction){
+  int state = guiState;
+  switch(guiState) {
+    case INFOPAGE_STATE:
+      if(direction == RotaryEncoder::Direction::CLOCKWISE) state=TEMPPAGE_STATE;
+      break;
+    case TEMPPAGE_STATE:
+      if(direction == RotaryEncoder::Direction::CLOCKWISE) state=WIFIPAGE_STATE;
+      if(direction == RotaryEncoder::Direction::COUNTERCLOCKWISE) state=INFOPAGE_STATE;
+      break;
+    case WIFIPAGE_STATE:
+      if(direction == RotaryEncoder::Direction::COUNTERCLOCKWISE) state=TEMPPAGE_STATE; 
+      break;
+  }              
+
+  if(state != guiState){
+    guiState = state;
+
+    if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){      
+      switch(guiState){
+        case INFOPAGE_STATE: 
+          if(direction==RotaryEncoder::Direction::CLOCKWISE)
+            loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);
+          else
+            loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT);
+          break; 
+        case TEMPPAGE_STATE:
+          if(direction==RotaryEncoder::Direction::CLOCKWISE)
+            loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);
+          else
+            loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT);
+          break; 
+        case WIFIPAGE_STATE:
+          if(direction==RotaryEncoder::Direction::CLOCKWISE)
+            loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);
+          else
+            loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT);
+          break;       
       }
+      xSemaphoreGive(guiMutex); 
     }
   }
 }
@@ -151,4 +187,8 @@ void my_disp_flush( lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *colo
     Tft.pushColors( ( uint16_t * )&color_p->full, w * h );
 
     lv_disp_flush_ready( disp );  
+}
+
+void action_on_wifi_page_loaded(lv_event_t * e){
+  Serial.println("action_on_wifi_page_loaded");
 }

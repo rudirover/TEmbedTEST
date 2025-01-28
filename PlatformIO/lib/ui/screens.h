@@ -7,11 +7,20 @@
 extern "C" {
 #endif
 
+typedef struct _groups_t {
+    lv_group_t *wifiPageGroup;
+} groups_t;
+
+extern groups_t groups;
+
+void ui_create_groups();
+
 typedef struct _objects_t {
     lv_obj_t *info_page;
     lv_obj_t *temp_page;
     lv_obj_t *wifi_page;
     lv_obj_t *wifi_ssid_drop_down;
+    lv_obj_t *wifi_pass_text;
     lv_obj_t *obj0;
     lv_obj_t *obj1;
     lv_obj_t *obj2;
@@ -32,7 +41,6 @@ typedef struct _objects_t {
     lv_obj_t *wificonnection_label;
     lv_obj_t *wifi_ssid_label;
     lv_obj_t *wifi_pass_label;
-    lv_obj_t *wifi_pass_text;
 } objects_t;
 
 extern objects_t objects;

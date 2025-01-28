@@ -8,6 +8,7 @@
 #include <OneButton.h>
 #include "ui.h"
 #include "task.h"
+#include "actions.h"
 
 #define POWER_ON 46
 #define PIN_ENCODE_A          2
@@ -22,12 +23,13 @@ enum guiState{
     NONE_STATE,
     INFOPAGE_STATE,
     TEMPPAGE_STATE,
-    WIFIPAGE_STATE};
+    WIFIPAGE_STATE,
+    WIFISSIDSEL_STATE};
 
 void guiTask(void *param);
 
-
-//void readEncoder(lv_indev_drv_t * indev_drv, lv_indev_data_t * data);
+void buttonClicked();
+void readEncoder(RotaryEncoder::Direction direction);
 void setBackLightLevel(byte level);
 void my_disp_flush( lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p );
 
