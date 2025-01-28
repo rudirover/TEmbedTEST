@@ -2,17 +2,17 @@
 #include "ui.h"
 #include <lvgl.h>
 
-lv_color_t *buf1; //[ screenWidth * screenHeight];
-lv_color_t *buf2; //[ screenWidth * screenHeight];   
+lv_color_t *buf1[ SCREENWIDTH * SCREENHEIGHT];
+lv_color_t *buf2[ SCREENWIDTH * SCREENHEIGHT];   
 TFT_eSPI Tft = TFT_eSPI(SCREENWIDTH, SCREENHEIGHT); // TFT instance 
 lv_disp_draw_buf_t draw_buf;
 
 unsigned long lastTickMillis = 0;
 SemaphoreHandle_t guiMutex;
-int screenNb = 0;
+int screenNb = 1;
 unsigned int screenTimer;
 
-#define SCREENTIME 2000
+#define SCREENTIME 2500
 
 typedef struct {
     uint8_t cmd;
@@ -86,7 +86,7 @@ void guiTask(void *param) {
   // Initialize the display
   lv_init();
 
-    lv_color_t *buf1 = (lv_color_t *)heap_caps_malloc(DISP_BUF_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA);
+    //lv_color_t *buf1 = (lv_color_t *)heap_caps_malloc(DISP_BUF_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA);
     //lv_color_t *buf2 = heap_caps_malloc(DISP_BUF_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA);    
   lv_disp_draw_buf_init( &draw_buf, buf1, NULL, DISP_BUF_SIZE );
 
@@ -114,31 +114,40 @@ void guiTask(void *param) {
 
   ui_init();
 
+  if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){
+    loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_FADE_IN);      
+    xSemaphoreGive(guiMutex);  
+  }
+
+  screenTimer = millis();
+
   while(true) {
-    unsigned int tickPeriod = millis() - lastTickMillis;
-    //lv_tick_inc(tickPeriod);
-    lastTickMillis = millis();
 
     if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){
-        lv_timer_handler();
+      lv_timer_handler();
+        
 
-    xSemaphoreGive(guiMutex);
+      xSemaphoreGive(guiMutex);
 
-  }
-
-  if(millis() - screenTimer > SCREENTIME) {
-    switch (screenNb) {
-        case 0: loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_FADE_IN); break;
-        case 1: loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_FADE_IN); break;
-        case 2: loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_FADE_IN); break;
     }
-    screenNb++;
-    if (screenNb > 2) screenNb = 0;
-    screenTimer=millis();
+
+    if(millis() - screenTimer > SCREENTIME) {
+      screenNb++;
+      if (screenNb > 2) screenNb = 0;
+      screenTimer=millis();
+      if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){
+        switch (screenNb) {
+          case 0: loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
+          case 1: loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
+          case 2: loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
+        }
+        xSemaphoreGive(guiMutex);
+
+      }      
+
+    }
 
   }
-
-}
 }
 
 
