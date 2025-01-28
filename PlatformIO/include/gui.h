@@ -18,6 +18,12 @@
 #define SCREENHEIGHT 320
 #define DISP_BUF_SIZE SCREENWIDTH*SCREENHEIGHT
 
+enum guiState{
+    NONE_STATE,
+    INFOPAGE_STATE,
+    TEMPPAGE_STATE,
+    WIFIPAGE_STATE};
+
 void guiTask(void *param);
 
 

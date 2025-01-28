@@ -3,39 +3,18 @@
 #include <lvgl.h>
 
 lv_color_t *buf1[ SCREENWIDTH * SCREENHEIGHT];
-lv_color_t *buf2[ SCREENWIDTH * SCREENHEIGHT];   
+//lv_color_t *buf2[ SCREENWIDTH * SCREENHEIGHT];   
 TFT_eSPI Tft = TFT_eSPI(SCREENWIDTH, SCREENHEIGHT); // TFT instance 
 lv_disp_draw_buf_t draw_buf;
 
 unsigned long lastTickMillis = 0;
 SemaphoreHandle_t guiMutex;
-int screenNb = 1;
 unsigned int screenTimer;
 
+unsigned int newGuiState = INFOPAGE_STATE;
+unsigned int oldGuiState = NONE_STATE;
+
 #define SCREENTIME 2500
-
-typedef struct {
-    uint8_t cmd;
-    uint8_t data[14];
-    uint8_t len;
-} lcd_cmd_t;
-
-lcd_cmd_t lcd_st7789v[] = {
-    {0x11, {0}, 0 | 0x80},
-    {0x3A, {0X05}, 1},
-    {0xB2, {0X0B, 0X0B, 0X00, 0X33, 0X33}, 5},
-    {0xB7, {0X75}, 1},
-    {0xBB, {0X28}, 1},
-    {0xC0, {0X2C}, 1},
-    {0xC2, {0X01}, 1},
-    {0xC3, {0X1F}, 1},
-    {0xC6, {0X13}, 1},
-    {0xD0, {0XA7}, 1},
-    {0xD0, {0XA4, 0XA1}, 2},
-    {0xD6, {0XA1}, 1},
-    {0xE0, {0XF0, 0X05, 0X0A, 0X06, 0X06, 0X03, 0X2B, 0X32, 0X43, 0X36, 0X11, 0X10, 0X2B, 0X32}, 14},
-    {0xE1, {0XF0, 0X08, 0X0C, 0X0B, 0X09, 0X24, 0X2B, 0X22, 0X43, 0X38, 0X15, 0X16, 0X2F, 0X37}, 14},
-};
 
 void guiTask(void *param) {
 
@@ -50,20 +29,6 @@ void guiTask(void *param) {
   Tft.init(); // don't forget to initialize TFT!!!
   Tft.setRotation(3);
   Tft.fillScreen(TFT_BLACK); 
-
-/*
-    // Update Embed initialization parameters
-    for (uint8_t i = 0; i < (sizeof(lcd_st7789v) / sizeof(lcd_cmd_t)); i++) {
-        Tft.writecommand(lcd_st7789v[i].cmd);
-        for (int j = 0; j < (lcd_st7789v[i].len & 0x7f); j++) {
-            Tft.writedata(lcd_st7789v[i].data[j]);
-        }
-
-        if (lcd_st7789v[i].len & 0x80) {
-            delay(120);
-        }
-    }   
-  */
 
   int x= Tft.width();
   int y=Tft.height();
@@ -85,9 +50,7 @@ void guiTask(void *param) {
 
   // Initialize the display
   lv_init();
-
-    //lv_color_t *buf1 = (lv_color_t *)heap_caps_malloc(DISP_BUF_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA);
-    //lv_color_t *buf2 = heap_caps_malloc(DISP_BUF_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA);    
+  
   lv_disp_draw_buf_init( &draw_buf, buf1, NULL, DISP_BUF_SIZE );
 
   static lv_disp_drv_t disp_drv;
@@ -98,19 +61,8 @@ void guiTask(void *param) {
   //disp_drv.sw_rotate = 1;
   disp_drv.flush_cb = my_disp_flush;
   disp_drv.draw_buf = &draw_buf;
-  disp_drv.full_refresh = 0;
-  lv_disp_drv_register( &disp_drv );
-
-  /* Encoder setup
-  static lv_indev_drv_t indev_drv;
-  lv_indev_drv_init(&indev_drv);
-  indev_drv.type = LV_INDEV_TYPE_ENCODER;
-  indev_drv.read_cb = readEncoder;
-  static lv_indev_t *indev;
-  indev=lv_indev_drv_register(&indev_drv);
-  lv_group_t *group = lv_group_get_default();
-  lv_indev_set_group (indev, group);
-  */     
+  disp_drv.full_refresh = 1;
+  lv_disp_drv_register( &disp_drv );    
 
   ui_init();
 
@@ -125,28 +77,26 @@ void guiTask(void *param) {
 
     if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){
       lv_timer_handler();
-        
-
       xSemaphoreGive(guiMutex);
-
     }
 
     if(millis() - screenTimer > SCREENTIME) {
-      screenNb++;
-      if (screenNb > 2) screenNb = 0;
       screenTimer=millis();
-      if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){
-        switch (screenNb) {
-          case 0: loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
-          case 1: loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
-          case 2: loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
-        }
-        xSemaphoreGive(guiMutex);
+      newGuiState++;
+      if(newGuiState > WIFIPAGE_STATE) newGuiState=INFOPAGE_STATE;
 
-      }      
-
+      if(newGuiState != oldGuiState){
+        if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){
+          switch (newGuiState) {
+            case 1: loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
+            case 2: loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
+            case 3: loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
+          }
+          xSemaphoreGive(guiMutex);
+          oldGuiState = newGuiState;
+        }      
+      }
     }
-
   }
 }
 
