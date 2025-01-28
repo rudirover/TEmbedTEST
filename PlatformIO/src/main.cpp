@@ -10,7 +10,8 @@ void setup()
   Serial.println("***** T-Embed Board *****"); 
   Serial.println("*************************");      
 
-  xTaskCreate(guiTask, "guiTask", 16384, NULL, 10, &guiTaskHandler);    
+  //xTaskCreate(guiTask, "guiTask", 8096, NULL, 10, &guiTaskHandler); 
+  xTaskCreatePinnedToCore(guiTask, "guiTask", 4096*2, NULL, 0, NULL, 1);     
 }
 
  

@@ -14,8 +14,9 @@
 #define PIN_ENCODE_B          1
 #define PIN_ENCODE_BTN        0
 
-#define SCREENWIDTH 170;
-#define SCREENHEIGHT 320;
+#define SCREENWIDTH 170
+#define SCREENHEIGHT 320
+#define DISP_BUF_SIZE SCREENWIDTH*SCREENHEIGHT
 
 void guiTask(void *param);
 

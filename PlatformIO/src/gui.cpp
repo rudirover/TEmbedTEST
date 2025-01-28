@@ -2,14 +2,17 @@
 #include "ui.h"
 #include <lvgl.h>
 
-const uint16_t screenWidth  = SCREENWIDTH;
-const uint16_t screenHeight = SCREENHEIGHT;
-lv_color_t buf1[ screenWidth * screenHeight];
-lv_color_t buf2[ screenWidth * screenHeight];   
-TFT_eSPI Tft = TFT_eSPI(screenWidth, screenHeight); // TFT instance 
+lv_color_t *buf1; //[ screenWidth * screenHeight];
+lv_color_t *buf2; //[ screenWidth * screenHeight];   
+TFT_eSPI Tft = TFT_eSPI(SCREENWIDTH, SCREENHEIGHT); // TFT instance 
 lv_disp_draw_buf_t draw_buf;
 
-lv_obj_t *btn1;
+unsigned long lastTickMillis = 0;
+SemaphoreHandle_t guiMutex;
+int screenNb = 0;
+unsigned int screenTimer;
+
+#define SCREENTIME 2000
 
 typedef struct {
     uint8_t cmd;
@@ -78,15 +81,19 @@ void guiTask(void *param) {
   Serial.println( LVGL_Arduino );
   Serial.println( "I am LVGL_Arduino" );
 
+    guiMutex = xSemaphoreCreateMutex();
 
   // Initialize the display
   lv_init();
-  lv_disp_draw_buf_init( &draw_buf, buf1, NULL, screenWidth * screenHeight );
+
+    lv_color_t *buf1 = (lv_color_t *)heap_caps_malloc(DISP_BUF_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA);
+    //lv_color_t *buf2 = heap_caps_malloc(DISP_BUF_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA);    
+  lv_disp_draw_buf_init( &draw_buf, buf1, NULL, DISP_BUF_SIZE );
 
   static lv_disp_drv_t disp_drv;
   lv_disp_drv_init( &disp_drv );
-  disp_drv.hor_res = screenWidth;
-  disp_drv.ver_res = screenHeight;
+  disp_drv.hor_res = SCREENWIDTH;
+  disp_drv.ver_res = SCREENHEIGHT;
   disp_drv.rotated = LV_DISP_ROT_270;
   //disp_drv.sw_rotate = 1;
   disp_drv.flush_cb = my_disp_flush;
@@ -108,26 +115,36 @@ void guiTask(void *param) {
   ui_init();
 
   while(true) {
-    vTaskDelay(2000 / portTICK_PERIOD_MS);
-    loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT);    
- 
-    ui_tick();
-    lv_timer_handler();    
-    vTaskDelay(2000 / portTICK_PERIOD_MS);    
-    loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);
+    unsigned int tickPeriod = millis() - lastTickMillis;
+    //lv_tick_inc(tickPeriod);
+    lastTickMillis = millis();
 
-    ui_tick();
-    lv_timer_handler();    
-    vTaskDelay(2000 / portTICK_PERIOD_MS);    
-    loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);    
+    if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){
+        lv_timer_handler();
+
+    xSemaphoreGive(guiMutex);
 
   }
+
+  if(millis() - screenTimer > SCREENTIME) {
+    switch (screenNb) {
+        case 0: loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_FADE_IN); break;
+        case 1: loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_FADE_IN); break;
+        case 2: loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_FADE_IN); break;
+    }
+    screenNb++;
+    if (screenNb > 2) screenNb = 0;
+    screenTimer=millis();
+
+  }
+
+}
 }
 
 
 void setBackLightLevel(byte level)
 {
-    analogWrite(TFT_BL, level);
+    analogWrite(15, level);
 }
 
 
