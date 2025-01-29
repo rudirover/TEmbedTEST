@@ -152,7 +152,8 @@ void create_screen_wifi_page() {
             lv_textarea_set_text(obj, "PassWord");
             lv_textarea_set_placeholder_text(obj, "******************");
             lv_textarea_set_one_line(obj, true);
-            lv_textarea_set_password_mode(obj, true);          
+            lv_textarea_set_password_mode(obj, true); 
+            lv_obj_clear_state(obj, LV_STATE_FOCUSED);                     
             lv_obj_set_style_text_font(obj, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_outline_width(obj, 5, LV_PART_MAIN | LV_STATE_FOCUSED);
             lv_obj_set_style_outline_color(obj, lv_color_hex(0xff0000ff), LV_PART_MAIN | LV_STATE_FOCUSED);
@@ -179,6 +180,7 @@ void create_screen_wifi_page() {
             lv_textarea_set_password_mode(obj, false);
             lv_obj_add_event_cb(obj, event_handler_cb_wifi_page_wifi_pass_input, LV_EVENT_ALL, 0);
             lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_state(obj, LV_STATE_FOCUSED);            
             lv_obj_set_style_border_color(obj, lv_color_hex(0xff0000ff), LV_PART_SELECTED | LV_STATE_DEFAULT);
             lv_obj_set_style_border_color(obj, lv_color_hex(0xff0000ff), LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_border_color(obj, lv_color_hex(0xff0000ff), LV_PART_CURSOR | LV_STATE_DEFAULT);

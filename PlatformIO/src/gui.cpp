@@ -128,14 +128,11 @@ void buttonClicked(){
         lv_obj_clear_flag(objects.wifi_pass_keyb, LV_OBJ_FLAG_HIDDEN);
         lv_group_focus_obj(objects.wifi_pass_keyb);        
         lv_textarea_set_text(objects.wifi_pass_input, lv_textarea_get_text(objects.wifi_pass_text));
-        lv_group_set_editing(groups.wifiPageGroup, true);
-        //lv_group_send_data(groups.wifiPageGroup, LV_KEY_RIGHT);     
+        lv_group_set_editing(groups.wifiPageGroup, true);    
         guiState=WIFIPASSEDIT_STATE;
         break; 
       case WIFIPASSEDIT_STATE:
-        Serial.println("LV_EVENT_CLICKED");
-        lv_group_send_data(groups.wifiPageGroup, LV_EVENT_CLICKED);
-        break;      
+        lv_event_send(objects.wifi_pass_keyb, LV_EVENT_VALUE_CHANGED, NULL);     
     }
     //xSemaphoreGive(guiMutex);
   //}       
