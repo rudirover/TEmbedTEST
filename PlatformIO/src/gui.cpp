@@ -128,18 +128,14 @@ void buttonClicked(){
         lv_obj_clear_flag(objects.wifi_pass_keyb, LV_OBJ_FLAG_HIDDEN);
         lv_group_focus_obj(objects.wifi_pass_keyb);        
         lv_textarea_set_text(objects.wifi_pass_input, lv_textarea_get_text(objects.wifi_pass_text));
-        lv_btnmatrix_set_selected_btn(objects.wifi_pass_keyb, 25);
-        int t=lv_btnmatrix_get_selected_btn(objects.wifi_pass_keyb);
-        Serial.print("Selected Btn-id: ");
-        Serial.println(t);
-        //lv_btnmatrix_set_btn_ctrl(objects.wifi_pass_keyb, t, LV_BTNMATRIX_CTRL_CHECKED);        
-        //const char *c=lv_btnmatrix_get_btn_text(objects.wifi_pass_keyb, t);
-        //Serial.print("Selected Btn-text: ");
-        //Serial.println(c);  
-        lv_event_send(objects.wifi_pass_keyb, LV_EVENT_CLICKED, &t);      
+        lv_group_set_editing(groups.wifiPageGroup, true);
+        //lv_group_send_data(groups.wifiPageGroup, LV_KEY_RIGHT);     
         guiState=WIFIPASSEDIT_STATE;
-        break;        
-
+        break; 
+      case WIFIPASSEDIT_STATE:
+        Serial.println("LV_EVENT_CLICKED");
+        lv_group_send_data(groups.wifiPageGroup, LV_EVENT_CLICKED);
+        break;      
     }
     //xSemaphoreGive(guiMutex);
   //}       
@@ -197,7 +193,15 @@ void readEncoder(RotaryEncoder::Direction direction){
     case WIFIPASSFOCUS_STATE:
       lv_group_focus_obj(objects.wifi_ssid_drop_down);
       guiState=WIFISSIDFOCUS_STATE;      
-      break;      
+      break;
+    case WIFIPASSEDIT_STATE:
+      if(direction == RotaryEncoder::Direction::CLOCKWISE){  
+        lv_group_send_data(groups.wifiPageGroup, LV_KEY_RIGHT);       
+      }  
+      if(direction == RotaryEncoder::Direction::COUNTERCLOCKWISE){  
+        lv_group_send_data(groups.wifiPageGroup, LV_KEY_LEFT);       
+      } 
+      break;       
     }
     //xSemaphoreGive(guiMutex); 
   //}
