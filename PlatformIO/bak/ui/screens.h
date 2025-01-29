@@ -7,32 +7,40 @@
 extern "C" {
 #endif
 
+typedef struct _groups_t {
+    lv_group_t *wifiPageGroup;
+} groups_t;
+
+extern groups_t groups;
+
+void ui_create_groups();
+
 typedef struct _objects_t {
     lv_obj_t *info_page;
     lv_obj_t *temp_page;
     lv_obj_t *wifi_page;
     lv_obj_t *wifi_ssid_drop_down;
+    lv_obj_t *wifi_pass_text;
     lv_obj_t *obj0;
     lv_obj_t *obj1;
     lv_obj_t *obj2;
-    lv_obj_t *wificonnection_text_1;
+    lv_obj_t *infopage_label;
     lv_obj_t *obj3;
     lv_obj_t *obj4;
     lv_obj_t *obj5;
     lv_obj_t *setpoint_temp_arc;
-    lv_obj_t *setpoint_temp_text;
-    lv_obj_t *setpoint_temp_arc_1;
-    lv_obj_t *actual_temp_text7;
-    lv_obj_t *temperatures_text;
     lv_obj_t *setpoint_label;
+    lv_obj_t *setpoint_temp_arc_1;
     lv_obj_t *actual_label;
+    lv_obj_t *temperatures_label;
+    lv_obj_t *setpoint_text;
+    lv_obj_t *actual_text;
     lv_obj_t *obj6;
     lv_obj_t *obj7;
     lv_obj_t *obj8;
-    lv_obj_t *wificonnection_text;
-    lv_obj_t *wifi_ssid_text;
+    lv_obj_t *wificonnection_label;
+    lv_obj_t *wifi_ssid_label;
     lv_obj_t *wifi_pass_label;
-    lv_obj_t *wifi_pass_text;
 } objects_t;
 
 extern objects_t objects;

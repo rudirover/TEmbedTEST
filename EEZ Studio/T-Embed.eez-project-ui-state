@@ -1,7 +1,8 @@
 {
   "navigation": {
-    "selectedUserPageObject": "[T-Embed.eez-project]:/userPages/2",
-    "selectedGlobalVariableObject": "[T-Embed.eez-project]:/variables/globalVariables/3",
+    "selectedUserPageObject": "[T-Embed.eez-project]:/userPages/0",
+    "selectedGlobalVariableObject": "[T-Embed.eez-project]:/variables/globalVariables/-1",
+    "selectedLvglGroupObject": "[T-Embed.eez-project]:/lvglGroups/groups/-1",
     "subnavigationSelectedItems": {
       "variables-tab/sub-navigation/selected-item": "Global"
     }
@@ -24,7 +25,8 @@
           },
           {
             "type": "border",
-            "size": 240,
+            "selected": 4,
+            "size": 154.5,
             "location": "right",
             "children": [
               {
@@ -71,8 +73,8 @@
           },
           {
             "type": "border",
-            "selected": 0,
-            "size": 99.09375,
+            "selected": 1,
+            "size": 62.09375,
             "location": "bottom",
             "children": [
               {
@@ -119,7 +121,7 @@
             {
               "type": "row",
               "id": "#595c3530-578a-4bee-8314-ef7c412146f9",
-              "weight": 15.300149328715229,
+              "weight": 28.128222128336727,
               "children": [
                 {
                   "type": "tabset",
@@ -190,7 +192,7 @@
             {
               "type": "tabset",
               "id": "EDITORS",
-              "weight": 65.00893142724854,
+              "weight": 40.044982265292624,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
               "children": [
@@ -200,7 +202,7 @@
                   "name": "wifiPage",
                   "component": "editor",
                   "config": {
-                    "objectPath": "[T-Embed.eez-project]:/userPages/2",
+                    "objectPath": "[T-Embed.eez-project]:/userPages/0",
                     "permanent": false
                   },
                   "icon": "svg:page"
@@ -223,7 +225,7 @@
             {
               "type": "row",
               "id": "#658233b3-e81e-49ac-be89-868833cc5bf5",
-              "weight": 19.690919244036227,
+              "weight": 31.82679560637063,
               "children": [
                 {
                   "type": "tabset",
@@ -965,7 +967,8 @@
                       "component": "groups",
                       "enableClose": false
                     }
-                  ]
+                  ],
+                  "active": true
                 },
                 {
                   "type": "tabset",
@@ -997,7 +1000,10 @@
   "objects": {
     "[T-Embed.eez-project]:/userPages/0[flow-state]": {
       "selection": {
-        "0": {}
+        "0": {
+          "3": {},
+          "5": {}
+        }
       },
       "transform": {
         "translate": {
@@ -1036,7 +1042,8 @@
     "[T-Embed.eez-project]:/userPages/2[flow-state]": {
       "selection": {
         "0": {
-          "3": {}
+          "3": {},
+          "5": {}
         }
       },
       "transform": {
@@ -1060,14 +1067,14 @@
   "searchMatchWholeWord": false,
   "replaceEnabled": false,
   "replaceText": "",
-  "pageRuntimeFrontFace": false,
+  "pageRuntimeFrontFace": true,
   "breakpoints": {},
   "watchExpressions": [],
   "showComponentDescriptions": true,
   "logsPanelFilter": "all",
   "selectedStylePropertyName": "",
-  "lvglPart": "MAIN",
-  "lvglState": "DEFAULT",
+  "lvglPart": "SELECTED",
+  "lvglState": "FOCUSED",
   "lvglExpandedPropertiesGroup": [
     "POSITION AND SIZE",
     "LAYOUT",
@@ -1086,5 +1093,5 @@
   "showInactiveFlowsInDebugger": true,
   "globalFlowZoom": true,
   "flowZoom": 1,
-  "implementationLanguage": "C"
+  "implementationLanguage": "C++"
 }

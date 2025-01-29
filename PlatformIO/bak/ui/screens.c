@@ -10,8 +10,37 @@
 
 #include <string.h>
 
+groups_t groups;
+static bool groups_created = false;
+
 objects_t objects;
 lv_obj_t *tick_value_change_obj;
+
+static void event_handler_cb_info_page_info_page(lv_event_t *e) {
+    lv_event_code_t event = lv_event_get_code(e);
+    if (event == LV_EVENT_SCREEN_LOAD_START) {
+        // group: wifiPageGroup
+        lv_group_remove_all_objs(groups.wifiPageGroup);
+    }
+}
+
+static void event_handler_cb_temp_page_temp_page(lv_event_t *e) {
+    lv_event_code_t event = lv_event_get_code(e);
+    if (event == LV_EVENT_SCREEN_LOAD_START) {
+        // group: wifiPageGroup
+        lv_group_remove_all_objs(groups.wifiPageGroup);
+    }
+}
+
+static void event_handler_cb_wifi_page_wifi_page(lv_event_t *e) {
+    lv_event_code_t event = lv_event_get_code(e);
+    if (event == LV_EVENT_SCREEN_LOAD_START) {
+        // group: wifiPageGroup
+        lv_group_remove_all_objs(groups.wifiPageGroup);
+        //lv_group_add_obj(groups.wifiPageGroup, objects.wifi_ssid_drop_down);
+        //lv_group_add_obj(groups.wifiPageGroup, objects.wifi_pass_text);
+    }
+}
 
 static void event_handler_cb_wifi_page_wifi_ssid_drop_down(lv_event_t *e) {
     lv_event_code_t event = lv_event_get_code(e);
@@ -29,6 +58,7 @@ void create_screen_info_page() {
     objects.info_page = obj;
     lv_obj_set_pos(obj, 0, 0);
     lv_obj_set_size(obj, 320, 170);
+    lv_obj_add_event_cb(obj, event_handler_cb_info_page_info_page, LV_EVENT_ALL, 0);
     lv_obj_set_style_bg_color(obj, lv_color_hex(0xff000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     {
         lv_obj_t *parent_obj = obj;
@@ -57,12 +87,12 @@ void create_screen_info_page() {
             lv_led_set_brightness(obj, 255);
         }
         {
-            // wificonnectionText_1
+            // infopageLabel
             lv_obj_t *obj = lv_label_create(parent_obj);
-            objects.wificonnection_text_1 = obj;
-            lv_obj_set_pos(obj, 93, 8);
+            objects.infopage_label = obj;
+            lv_obj_set_pos(obj, 86, 9);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-            lv_label_set_text(obj, "WIFI CONNECTION");
+            lv_label_set_text(obj, "INFORMATION PAGE");
             lv_obj_set_style_text_color(obj, lv_color_hex(0xffffffff), LV_PART_MAIN | LV_STATE_DEFAULT);
         }
     }
@@ -76,6 +106,7 @@ void create_screen_temp_page() {
     objects.temp_page = obj;
     lv_obj_set_pos(obj, 0, 0);
     lv_obj_set_size(obj, 320, 170);
+    lv_obj_add_event_cb(obj, event_handler_cb_temp_page_temp_page, LV_EVENT_ALL, 0);
     lv_obj_set_style_bg_color(obj, lv_color_hex(0xff000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     {
         lv_obj_t *parent_obj = obj;
@@ -84,7 +115,7 @@ void create_screen_temp_page() {
             objects.obj3 = obj;
             lv_obj_set_pos(obj, 120, 153);
             lv_obj_set_size(obj, 8, 8);
-            lv_led_set_color(obj, lv_color_hex(0xff0000ff));
+            lv_led_set_color(obj, lv_color_hex(0xffc0c0c0));
             lv_led_set_brightness(obj, 255);
         }
         {
@@ -92,7 +123,7 @@ void create_screen_temp_page() {
             objects.obj4 = obj;
             lv_obj_set_pos(obj, 156, 153);
             lv_obj_set_size(obj, 8, 8);
-            lv_led_set_color(obj, lv_color_hex(0xffc0c0c0));
+            lv_led_set_color(obj, lv_color_hex(0xff0000ff));
             lv_led_set_brightness(obj, 255);
         }
         {
@@ -116,9 +147,9 @@ void create_screen_temp_page() {
             lv_obj_set_style_arc_width(obj, 8, LV_PART_INDICATOR | LV_STATE_DEFAULT);
         }
         {
-            // setpointTempText
+            // setpointLabel
             lv_obj_t *obj = lv_label_create(parent_obj);
-            objects.setpoint_temp_text = obj;
+            objects.setpoint_label = obj;
             lv_obj_set_pos(obj, 43, 124);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_label_set_text(obj, "SETPOINT");
@@ -137,27 +168,27 @@ void create_screen_temp_page() {
             lv_obj_set_style_arc_width(obj, 8, LV_PART_INDICATOR | LV_STATE_DEFAULT);
         }
         {
-            // actualTempText7
+            // actualLabel
             lv_obj_t *obj = lv_label_create(parent_obj);
-            objects.actual_temp_text7 = obj;
+            objects.actual_label = obj;
             lv_obj_set_pos(obj, 218, 124);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_label_set_text(obj, "ACUTAL");
             lv_obj_set_style_text_color(obj, lv_color_hex(0xffffffff), LV_PART_MAIN | LV_STATE_DEFAULT);
         }
         {
-            // temperaturesText
+            // temperaturesLabel
             lv_obj_t *obj = lv_label_create(parent_obj);
-            objects.temperatures_text = obj;
+            objects.temperatures_label = obj;
             lv_obj_set_pos(obj, 102, 8);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_label_set_text(obj, "TEMPERATURES");
             lv_obj_set_style_text_color(obj, lv_color_hex(0xffffffff), LV_PART_MAIN | LV_STATE_DEFAULT);
         }
         {
-            // setpointLabel
+            // setpointTEXT
             lv_obj_t *obj = lv_label_create(parent_obj);
-            objects.setpoint_label = obj;
+            objects.setpoint_text = obj;
             lv_obj_set_pos(obj, 43, 67);
             lv_obj_set_size(obj, 71, LV_SIZE_CONTENT);
             lv_label_set_text(obj, "");
@@ -166,9 +197,9 @@ void create_screen_temp_page() {
             lv_obj_set_style_text_font(obj, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
         }
         {
-            // actualLabel
+            // actualTEXT
             lv_obj_t *obj = lv_label_create(parent_obj);
-            objects.actual_label = obj;
+            objects.actual_text = obj;
             lv_obj_set_pos(obj, 211, 67);
             lv_obj_set_size(obj, 71, LV_SIZE_CONTENT);
             lv_label_set_text(obj, "");
@@ -182,19 +213,19 @@ void create_screen_temp_page() {
 void tick_screen_temp_page() {
     {
         const char *new_val = get_var_actual_temperature();
-        const char *cur_val = lv_label_get_text(objects.setpoint_label);
+        const char *cur_val = lv_label_get_text(objects.setpoint_text);
         if (strcmp(new_val, cur_val) != 0) {
-            tick_value_change_obj = objects.setpoint_label;
-            lv_label_set_text(objects.setpoint_label, new_val);
+            tick_value_change_obj = objects.setpoint_text;
+            lv_label_set_text(objects.setpoint_text, new_val);
             tick_value_change_obj = NULL;
         }
     }
     {
         const char *new_val = get_var_actual_temperature();
-        const char *cur_val = lv_label_get_text(objects.actual_label);
+        const char *cur_val = lv_label_get_text(objects.actual_text);
         if (strcmp(new_val, cur_val) != 0) {
-            tick_value_change_obj = objects.actual_label;
-            lv_label_set_text(objects.actual_label, new_val);
+            tick_value_change_obj = objects.actual_text;
+            lv_label_set_text(objects.actual_text, new_val);
             tick_value_change_obj = NULL;
         }
     }
@@ -205,6 +236,7 @@ void create_screen_wifi_page() {
     objects.wifi_page = obj;
     lv_obj_set_pos(obj, 0, 0);
     lv_obj_set_size(obj, 320, 170);
+    lv_obj_add_event_cb(obj, event_handler_cb_wifi_page_wifi_page, LV_EVENT_ALL, 0);
     lv_obj_set_style_bg_color(obj, lv_color_hex(0xff000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     {
         lv_obj_t *parent_obj = obj;
@@ -213,7 +245,7 @@ void create_screen_wifi_page() {
             objects.obj6 = obj;
             lv_obj_set_pos(obj, 120, 153);
             lv_obj_set_size(obj, 8, 8);
-            lv_led_set_color(obj, lv_color_hex(0xff0000ff));
+            lv_led_set_color(obj, lv_color_hex(0xffc0c0c0));
             lv_led_set_brightness(obj, 255);
         }
         {
@@ -229,22 +261,22 @@ void create_screen_wifi_page() {
             objects.obj8 = obj;
             lv_obj_set_pos(obj, 196, 153);
             lv_obj_set_size(obj, 8, 8);
-            lv_led_set_color(obj, lv_color_hex(0xffc0c0c0));
+            lv_led_set_color(obj, lv_color_hex(0xff0000ff));
             lv_led_set_brightness(obj, 255);
         }
         {
-            // wificonnectionText
+            // wificonnectionLabel
             lv_obj_t *obj = lv_label_create(parent_obj);
-            objects.wificonnection_text = obj;
+            objects.wificonnection_label = obj;
             lv_obj_set_pos(obj, 93, 8);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_label_set_text(obj, "WIFI CONNECTION");
             lv_obj_set_style_text_color(obj, lv_color_hex(0xffffffff), LV_PART_MAIN | LV_STATE_DEFAULT);
         }
         {
-            // wifiSSIDText
+            // wifiSSIDLabel
             lv_obj_t *obj = lv_label_create(parent_obj);
-            objects.wifi_ssid_text = obj;
+            objects.wifi_ssid_label = obj;
             lv_obj_set_pos(obj, 16, 49);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_label_set_text(obj, "WIFI SSID:");
@@ -255,11 +287,15 @@ void create_screen_wifi_page() {
             // wifiSSIDDropDown
             lv_obj_t *obj = lv_dropdown_create(parent_obj);
             objects.wifi_ssid_drop_down = obj;
-            lv_obj_set_pos(obj, 108, 40);
+            lv_obj_set_pos(obj, 109, 40);
             lv_obj_set_size(obj, 200, 36);
             lv_dropdown_set_options(obj, "");
             lv_obj_add_event_cb(obj, event_handler_cb_wifi_page_wifi_ssid_drop_down, LV_EVENT_ALL, 0);
             lv_obj_set_style_text_font(obj, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_outline_color(obj, lv_color_hex(0xff0000ff), LV_PART_MAIN | LV_STATE_FOCUSED);
+            lv_obj_set_style_outline_width(obj, 5, LV_PART_MAIN | LV_STATE_FOCUSED);
+            lv_obj_set_style_outline_color(obj, lv_color_hex(0xff0000ff), LV_PART_SELECTED | LV_STATE_FOCUSED);
+            lv_obj_set_style_outline_width(obj, 5, LV_PART_SELECTED | LV_STATE_FOCUSED);
         }
         {
             // wifiPASSLabel
@@ -283,6 +319,11 @@ void create_screen_wifi_page() {
             lv_textarea_set_one_line(obj, true);
             lv_textarea_set_password_mode(obj, true);
             lv_obj_set_style_text_font(obj, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_font(obj, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_outline_color(obj, lv_color_hex(0xff0000ff), LV_PART_MAIN | LV_STATE_FOCUSED);
+            lv_obj_set_style_outline_width(obj, 5, LV_PART_MAIN | LV_STATE_FOCUSED);
+            lv_obj_set_style_outline_color(obj, lv_color_hex(0xff0000ff), LV_PART_SELECTED | LV_STATE_FOCUSED);
+            lv_obj_set_style_outline_width(obj, 5, LV_PART_SELECTED | LV_STATE_FOCUSED);            
         }
     }
 }
@@ -311,7 +352,16 @@ void tick_screen_wifi_page() {
 }
 
 
+void ui_create_groups() {
+    if (!groups_created) {
+        groups.wifiPageGroup = lv_group_create();
+        groups_created = true;
+    }
+}
+
 void create_screens() {
+    ui_create_groups();
+    
     lv_disp_t *dispp = lv_disp_get_default();
     lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), false, LV_FONT_DEFAULT);
     lv_disp_set_theme(dispp, theme);

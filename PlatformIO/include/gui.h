@@ -10,6 +10,7 @@
 #include "task.h"
 #include "actions.h"
 
+
 #define POWER_ON 46
 #define PIN_ENCODE_A          2
 #define PIN_ENCODE_B          1
@@ -25,7 +26,8 @@ enum guiState{
     TEMPPAGE_STATE,
     WIFIPAGE_STATE,
     WIFISSIDFOCUS_STATE,
-    WIFIPASSFOCUS_STATE};
+    WIFIPASSFOCUS_STATE,
+    WIFIPASSEDIT_STATE};
 
 void guiTask(void *param);
 

@@ -51,3 +51,19 @@ const char *get_var_wifi_ssid_list() {
 void set_var_wifi_ssid_list(const char *value){
 
 }
+
+const char *get_var_wifi_pass_input(){
+
+}
+
+void set_var_wifi_pass_input(const char *value){
+
+}
+
+bool get_var_wifi_pass_input_hidden() {
+
+}
+
+void set_var_wifi_pass_input_hidden(bool value) {
+  
+}

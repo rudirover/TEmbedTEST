@@ -7,6 +7,7 @@
 extern "C" {
 #endif
 
+extern void action_on_wifi_page_loaded(lv_event_t * e);
 
 
 #ifdef __cplusplus

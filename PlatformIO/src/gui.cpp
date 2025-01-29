@@ -8,11 +8,9 @@ OneButton Button =  OneButton(PIN_ENCODE_BTN);
 lv_color_t *buf1[ SCREENWIDTH * SCREENHEIGHT]; 
 lv_disp_draw_buf_t draw_buf;
 
-SemaphoreHandle_t guiMutex;
-unsigned int screenTimer;
+//SemaphoreHandle_t guiMutex;
+//unsigned int screenTimer;
 
-//unsigned int newGuiState = INFOPAGE_STATE;
-//unsigned int oldGuiState = NONE_STATE;
 int guiState = INFOPAGE_STATE;
 
 //#define SCREENTIME 2500
@@ -49,7 +47,7 @@ void guiTask(void *param) {
   Serial.println( LVGL_Arduino );
   Serial.println( "I am LVGL_Arduino" );
 
-  guiMutex = xSemaphoreCreateMutex();
+  //guiMutex = xSemaphoreCreateMutex();
 
   // Initialize the display
   lv_init();
@@ -65,23 +63,23 @@ void guiTask(void *param) {
   disp_drv.flush_cb = my_disp_flush;
   disp_drv.draw_buf = &draw_buf;
   disp_drv.full_refresh = 1;
-  lv_disp_drv_register( &disp_drv );    
+  lv_disp_drv_register( &disp_drv );     
 
   ui_init();
 
-  if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){
+  //if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){
     loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_FADE_IN);      
-    xSemaphoreGive(guiMutex);  
-  }
+  //  xSemaphoreGive(guiMutex);  
+  //}
 
   //screenTimer = millis();
 
   while(true) {
 
-    if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){
+    //if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){
       lv_timer_handler();
-      xSemaphoreGive(guiMutex);
-    }
+      //xSemaphoreGive(guiMutex);
+    //}
 
 /*
     //**************************************************************************
@@ -116,70 +114,94 @@ void guiTask(void *param) {
 }
 
 void buttonClicked(){
-  if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){    
+  //if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){    
     switch (guiState){
       case WIFIPAGE_STATE: 
           lv_group_add_obj(groups.wifiPageGroup, objects.wifi_ssid_drop_down);
           lv_group_add_obj(groups.wifiPageGroup, objects.wifi_pass_text);
+          lv_group_add_obj(groups.wifiPageGroup, objects.wifi_pass_keyb);
+          lv_group_add_obj(groups.wifiPageGroup, objects.wifi_pass_input);                    
           guiState = WIFISSIDFOCUS_STATE;
         break;
+      case WIFIPASSFOCUS_STATE:
+        lv_obj_clear_flag(objects.wifi_pass_input, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(objects.wifi_pass_keyb, LV_OBJ_FLAG_HIDDEN);
+        lv_group_focus_obj(objects.wifi_pass_keyb);        
+        lv_textarea_set_text(objects.wifi_pass_input, lv_textarea_get_text(objects.wifi_pass_text));
+        lv_btnmatrix_set_selected_btn(objects.wifi_pass_keyb, 25);
+        int t=lv_btnmatrix_get_selected_btn(objects.wifi_pass_keyb);
+        Serial.print("Selected Btn-id: ");
+        Serial.println(t);
+        //lv_btnmatrix_set_btn_ctrl(objects.wifi_pass_keyb, t, LV_BTNMATRIX_CTRL_CHECKED);        
+        //const char *c=lv_btnmatrix_get_btn_text(objects.wifi_pass_keyb, t);
+        //Serial.print("Selected Btn-text: ");
+        //Serial.println(c);  
+        lv_event_send(objects.wifi_pass_keyb, LV_EVENT_CLICKED, &t);      
+        guiState=WIFIPASSEDIT_STATE;
+        break;        
+
     }
-    xSemaphoreGive(guiMutex);
-  }       
+    //xSemaphoreGive(guiMutex);
+  //}       
 }
 
 void buttonLongPressed(){
-  if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){  
+  //if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){  
     switch (guiState){
       case WIFISSIDFOCUS_STATE:
       case WIFIPASSFOCUS_STATE: 
         lv_group_remove_all_objs(groups.wifiPageGroup);
         guiState = WIFIPAGE_STATE;
         break;
+      case WIFIPASSEDIT_STATE:
+        lv_obj_add_flag(objects.wifi_pass_input, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(objects.wifi_pass_keyb, LV_OBJ_FLAG_HIDDEN);
+        lv_group_focus_obj(objects.wifi_pass_text);
+        guiState=WIFIPASSFOCUS_STATE;
+        break;             
     }
-    xSemaphoreGive(guiMutex);
-  }      
+    //xSemaphoreGive(guiMutex);
+  //}      
 }
 
 
 void readEncoder(RotaryEncoder::Direction direction){
-  if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){  
+  //if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){  
     switch(guiState) {
     case INFOPAGE_STATE:
       if(direction == RotaryEncoder::Direction::CLOCKWISE){
-        guiState=TEMPPAGE_STATE;
         loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);
+        guiState=TEMPPAGE_STATE;        
       }        
       break;
     case TEMPPAGE_STATE:
       if(direction == RotaryEncoder::Direction::CLOCKWISE){
-        guiState=WIFIPAGE_STATE;
         loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);
+        guiState=WIFIPAGE_STATE;        
       }
       if(direction == RotaryEncoder::Direction::COUNTERCLOCKWISE){
-        guiState=INFOPAGE_STATE;
-        loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT); 
+        loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT);
+        guiState=INFOPAGE_STATE;         
       }       
       break;
     case WIFIPAGE_STATE:
       if(direction == RotaryEncoder::Direction::COUNTERCLOCKWISE){
-        guiState=TEMPPAGE_STATE;
         loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT);
+        guiState=TEMPPAGE_STATE;        
       }         
       break;
     case WIFISSIDFOCUS_STATE:
-      guiState=WIFIPASSFOCUS_STATE;
       lv_group_focus_obj(objects.wifi_pass_text);
+      guiState=WIFIPASSFOCUS_STATE;      
       break;
     case WIFIPASSFOCUS_STATE:
-      guiState=WIFISSIDFOCUS_STATE;
       lv_group_focus_obj(objects.wifi_ssid_drop_down);
+      guiState=WIFISSIDFOCUS_STATE;      
       break;      
     }
-    xSemaphoreGive(guiMutex); 
-  }
-}              
-
+    //xSemaphoreGive(guiMutex); 
+  //}
+}            
 
 
 void setBackLightLevel(byte level)
@@ -198,8 +220,4 @@ void my_disp_flush( lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *colo
     Tft.pushColors( ( uint16_t * )&color_p->full, w * h );
 
     lv_disp_flush_ready( disp );  
-}
-
-void action_on_wifi_page_loaded(lv_event_t * e){
-  Serial.println("action_on_wifi_page_loaded");
 }
