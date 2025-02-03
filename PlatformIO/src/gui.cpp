@@ -8,12 +8,7 @@ OneButton Button =  OneButton(PIN_ENCODE_BTN);
 lv_color_t *buf1[ SCREENWIDTH * SCREENHEIGHT]; 
 lv_disp_draw_buf_t draw_buf;
 
-//SemaphoreHandle_t guiMutex;
-//unsigned int screenTimer;
-
 int guiState = INFOPAGE_STATE;
-
-//#define SCREENTIME 2500
 
 void guiTask(void *param) {
 
@@ -47,7 +42,7 @@ void guiTask(void *param) {
   Serial.println( LVGL_Arduino );
   Serial.println( "I am LVGL_Arduino" );
 
-  //guiMutex = xSemaphoreCreateMutex();
+  vTaskDelay(500 / portTICK_PERIOD_MS);
 
   // Initialize the display
   lv_init();
@@ -64,9 +59,7 @@ void guiTask(void *param) {
   disp_drv.full_refresh = 1;
   lv_disp_drv_register( &disp_drv );     
 
-  ui_init();
-
-  //loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_FADE_IN);      
+  ui_init();     
 
   while(true) {
     lv_timer_handler();
