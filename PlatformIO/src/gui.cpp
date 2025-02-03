@@ -59,7 +59,6 @@ void guiTask(void *param) {
   disp_drv.hor_res = SCREENWIDTH;
   disp_drv.ver_res = SCREENHEIGHT;
   disp_drv.rotated = LV_DISP_ROT_270;
-  //disp_drv.sw_rotate = 1;
   disp_drv.flush_cb = my_disp_flush;
   disp_drv.draw_buf = &draw_buf;
   disp_drv.full_refresh = 1;
@@ -67,141 +66,97 @@ void guiTask(void *param) {
 
   ui_init();
 
-  //if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){
-    loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_FADE_IN);      
-  //  xSemaphoreGive(guiMutex);  
-  //}
-
-  //screenTimer = millis();
+  //loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_FADE_IN);      
 
   while(true) {
-
-    //if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){
-      lv_timer_handler();
-      //xSemaphoreGive(guiMutex);
-    //}
-
-/*
-    //**************************************************************************
-    //* Demo Running between screens                                          
-    //**************************************************************************
-    if(millis() - screenTimer > SCREENTIME) {
-      screenTimer=millis();
-      newGuiState++;
-      if(newGuiState > WIFIPAGE_STATE) newGuiState=INFOPAGE_STATE;
-    }
-
-    if(newGuiState != oldGuiState){
-      if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){
-        switch (newGuiState) {
-          case INFOPAGE_STATE: loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
-          case TEMPPAGE_STATE: loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
-          case WIFIPAGE_STATE: loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT); break; 
-        }
-        xSemaphoreGive(guiMutex);
-        oldGuiState = newGuiState;
-      }   
-    }
-    //**************************************************************************
-*/
+    lv_timer_handler();
     Encoder.tick();
-
     RotaryEncoder::Direction direction=Encoder.getDirection();
     if(direction != RotaryEncoder::Direction::NOROTATION) readEncoder(direction);
-
     Button.tick();
   }
 }
 
 void buttonClicked(){
-  //if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){    
-    switch (guiState){
-      case WIFIPAGE_STATE: 
-          lv_group_add_obj(groups.wifiPageGroup, objects.wifi_ssid_drop_down);
-          lv_group_add_obj(groups.wifiPageGroup, objects.wifi_pass_text);
-          lv_group_add_obj(groups.wifiPageGroup, objects.wifi_pass_keyb);
-          lv_group_add_obj(groups.wifiPageGroup, objects.wifi_pass_input);                    
-          guiState = WIFISSIDFOCUS_STATE;
-        break;
-      case WIFIPASSFOCUS_STATE:
-        lv_obj_clear_flag(objects.wifi_pass_input, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_clear_flag(objects.wifi_pass_keyb, LV_OBJ_FLAG_HIDDEN);
-        lv_group_focus_obj(objects.wifi_pass_keyb);        
-        lv_textarea_set_text(objects.wifi_pass_input, lv_textarea_get_text(objects.wifi_pass_text));
-        lv_group_set_editing(groups.wifiPageGroup, true);    
-        guiState=WIFIPASSEDIT_STATE;
-        break; 
-      case WIFIPASSEDIT_STATE:
+  switch (guiState){
+    case WIFIPAGE_STATE: 
+      lv_group_add_obj(groups.wifiPageGroup, objects.wifi_ssid_drop_down);
+      lv_group_add_obj(groups.wifiPageGroup, objects.wifi_pass_text);
+      lv_group_add_obj(groups.wifiPageGroup, objects.wifi_pass_keyb);
+      lv_group_add_obj(groups.wifiPageGroup, objects.wifi_pass_input);                    
+      guiState = WIFISSIDFOCUS_STATE;
+      break;
+    case WIFIPASSFOCUS_STATE:
+      lv_obj_clear_flag(objects.wifi_pass_input, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_clear_flag(objects.wifi_pass_keyb, LV_OBJ_FLAG_HIDDEN);
+      lv_group_focus_obj(objects.wifi_pass_keyb);        
+      lv_textarea_set_text(objects.wifi_pass_input, lv_textarea_get_text(objects.wifi_pass_text));
+      lv_group_set_editing(groups.wifiPageGroup, true);    
+      guiState=WIFIPASSEDIT_STATE;
+      break; 
+    case WIFIPASSEDIT_STATE:
         lv_event_send(objects.wifi_pass_keyb, LV_EVENT_VALUE_CHANGED, NULL);     
-    }
-    //xSemaphoreGive(guiMutex);
-  //}       
+  }      
 }
 
 void buttonLongPressed(){
-  //if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){  
-    switch (guiState){
-      case WIFISSIDFOCUS_STATE:
-      case WIFIPASSFOCUS_STATE: 
-        lv_group_remove_all_objs(groups.wifiPageGroup);
-        guiState = WIFIPAGE_STATE;
-        break;
-      case WIFIPASSEDIT_STATE:
-        lv_obj_add_flag(objects.wifi_pass_input, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_add_flag(objects.wifi_pass_keyb, LV_OBJ_FLAG_HIDDEN);
-        lv_group_focus_obj(objects.wifi_pass_text);
-        guiState=WIFIPASSFOCUS_STATE;
-        break;             
-    }
-    //xSemaphoreGive(guiMutex);
-  //}      
+  switch (guiState){
+    case WIFISSIDFOCUS_STATE:
+    case WIFIPASSFOCUS_STATE: 
+      lv_group_remove_all_objs(groups.wifiPageGroup);
+      guiState = WIFIPAGE_STATE;
+      break;
+    case WIFIPASSEDIT_STATE:
+      lv_obj_add_flag(objects.wifi_pass_input, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_add_flag(objects.wifi_pass_keyb, LV_OBJ_FLAG_HIDDEN);
+      lv_group_focus_obj(objects.wifi_pass_text);
+      guiState=WIFIPASSFOCUS_STATE;
+      break;             
+  }      
 }
 
 
 void readEncoder(RotaryEncoder::Direction direction){
-  //if(xSemaphoreTake(guiMutex, portMAX_DELAY)==pdTRUE){  
-    switch(guiState) {
-    case INFOPAGE_STATE:
-      if(direction == RotaryEncoder::Direction::CLOCKWISE){
-        loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);
-        guiState=TEMPPAGE_STATE;        
-      }        
-      break;
-    case TEMPPAGE_STATE:
-      if(direction == RotaryEncoder::Direction::CLOCKWISE){
-        loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);
-        guiState=WIFIPAGE_STATE;        
-      }
-      if(direction == RotaryEncoder::Direction::COUNTERCLOCKWISE){
-        loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT);
-        guiState=INFOPAGE_STATE;         
-      }       
-      break;
-    case WIFIPAGE_STATE:
-      if(direction == RotaryEncoder::Direction::COUNTERCLOCKWISE){
-        loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT);
-        guiState=TEMPPAGE_STATE;        
-      }         
-      break;
-    case WIFISSIDFOCUS_STATE:
-      lv_group_focus_obj(objects.wifi_pass_text);
-      guiState=WIFIPASSFOCUS_STATE;      
-      break;
-    case WIFIPASSFOCUS_STATE:
-      lv_group_focus_obj(objects.wifi_ssid_drop_down);
-      guiState=WIFISSIDFOCUS_STATE;      
-      break;
-    case WIFIPASSEDIT_STATE:
-      if(direction == RotaryEncoder::Direction::CLOCKWISE){  
-        lv_group_send_data(groups.wifiPageGroup, LV_KEY_RIGHT);       
-      }  
-      if(direction == RotaryEncoder::Direction::COUNTERCLOCKWISE){  
-        lv_group_send_data(groups.wifiPageGroup, LV_KEY_LEFT);       
-      } 
-      break;       
+  switch(guiState) {
+  case INFOPAGE_STATE:
+    if(direction == RotaryEncoder::Direction::CLOCKWISE){
+      loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);
+      guiState=TEMPPAGE_STATE;        
+    }        
+    break;
+  case TEMPPAGE_STATE:
+    if(direction == RotaryEncoder::Direction::CLOCKWISE){
+      loadScreen(SCREEN_ID_WIFI_PAGE, LV_SCR_LOAD_ANIM_OVER_LEFT);
+      guiState=WIFIPAGE_STATE;        
     }
-    //xSemaphoreGive(guiMutex); 
-  //}
+    if(direction == RotaryEncoder::Direction::COUNTERCLOCKWISE){
+      loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT);
+      guiState=INFOPAGE_STATE;         
+    }       
+    break;
+  case WIFIPAGE_STATE:
+    if(direction == RotaryEncoder::Direction::COUNTERCLOCKWISE){
+      loadScreen(SCREEN_ID_TEMP_PAGE, LV_SCR_LOAD_ANIM_OVER_RIGHT);
+      guiState=TEMPPAGE_STATE;        
+    }         
+    break;
+  case WIFISSIDFOCUS_STATE:
+    lv_group_focus_obj(objects.wifi_pass_text);
+    guiState=WIFIPASSFOCUS_STATE;      
+    break;
+  case WIFIPASSFOCUS_STATE:
+    lv_group_focus_obj(objects.wifi_ssid_drop_down);
+    guiState=WIFISSIDFOCUS_STATE;      
+    break;
+  case WIFIPASSEDIT_STATE:
+    if(direction == RotaryEncoder::Direction::CLOCKWISE){  
+      lv_group_send_data(groups.wifiPageGroup, LV_KEY_LEFT);       
+    }  
+    if(direction == RotaryEncoder::Direction::COUNTERCLOCKWISE){  
+      lv_group_send_data(groups.wifiPageGroup, LV_KEY_RIGHT);       
+    } 
+    break;       
+  }
 }            
 
 
