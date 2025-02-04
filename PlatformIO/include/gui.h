@@ -1,5 +1,5 @@
-#ifndef UI_H
-#define UI_H
+#ifndef GUI_H
+#define GUI_H
 
 #include <Arduino.h>
 #include <TFT_eSPI.h>
@@ -9,7 +9,9 @@
 #include "ui.h"
 #include "task.h"
 #include "actions.h"
+#include "network.h"
 
+extern TaskHandle_t  guiTaskHandler;
 
 #define POWER_ON 46
 #define PIN_ENCODE_A          2
@@ -26,8 +28,10 @@ enum guiState{
     TEMPPAGE_STATE,
     WIFIPAGE_STATE,
     WIFISSIDFOCUS_STATE,
+    WIFISCANNING_STATE,
     WIFIPASSFOCUS_STATE,
     WIFIPASSEDIT_STATE};
+
 
 void guiTask(void *param);
 

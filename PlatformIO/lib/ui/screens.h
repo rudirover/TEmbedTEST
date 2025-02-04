@@ -24,6 +24,7 @@ typedef struct _objects_t {
     lv_obj_t *wifi_pass_text;
     lv_obj_t *wifi_pass_keyb;
     lv_obj_t *wifi_pass_input;
+    lv_obj_t *wifi_spinner;    
     lv_obj_t *obj0;
     lv_obj_t *obj1;
     lv_obj_t *obj2;

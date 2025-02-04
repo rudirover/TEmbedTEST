@@ -1,6 +1,5 @@
 #include "gui.h"
 
-
 TFT_eSPI Tft = TFT_eSPI(SCREENWIDTH, SCREENHEIGHT); // TFT instance
 RotaryEncoder Encoder = RotaryEncoder(PIN_ENCODE_A, PIN_ENCODE_B);
 OneButton Button =  OneButton(PIN_ENCODE_BTN);
@@ -78,6 +77,15 @@ void buttonClicked(){
       lv_group_add_obj(groups.wifiPageGroup, objects.wifi_pass_keyb);
       lv_group_add_obj(groups.wifiPageGroup, objects.wifi_pass_input);                    
       guiState = WIFISSIDFOCUS_STATE;
+      break;
+    case WIFISSIDFOCUS_STATE:
+      guiState = WIFISCANNING_STATE;
+      lv_obj_clear_flag(objects.wifi_spinner, LV_OBJ_FLAG_HIDDEN);
+// need to start task here
+
+      Serial.print("networkScanTaskHandler: ");
+      Serial.println(uint32_t(networkScanTaskHandler));
+      vTaskResume(networkScanTaskHandler);
       break;
     case WIFIPASSFOCUS_STATE:
       lv_obj_clear_flag(objects.wifi_pass_input, LV_OBJ_FLAG_HIDDEN);

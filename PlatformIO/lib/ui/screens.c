@@ -185,6 +185,13 @@ void create_screen_wifi_page() {
             lv_obj_set_style_border_color(obj, lv_color_hex(0xff0000ff), LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_border_color(obj, lv_color_hex(0xff0000ff), LV_PART_CURSOR | LV_STATE_DEFAULT);
         }
+        {
+            lv_obj_t *obj = lv_spinner_create(parent_obj, 1000, 60);
+            objects.wifi_spinner = obj;            
+            lv_obj_set_pos(obj, 120, 45);
+            lv_obj_set_size(obj, 80, 80);
+            lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        }        
     }
     lv_keyboard_set_textarea(objects.wifi_pass_keyb, objects.wifi_pass_input);
 }

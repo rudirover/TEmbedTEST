@@ -1,17 +1,25 @@
 #include "main.h"
 
-static TaskHandle_t  guiTaskHandler;
+TaskHandle_t  networkScanTaskHandler =  NULL;
+TaskHandle_t  guiTaskHandler = NULL;
+bool runNetworkTask = false;
 
 void setup()
 {
   // Init serial port
   Serial.begin(115200);
+  delay(500);
   Serial.println("*************************");   
   Serial.println("***** T-Embed Board *****"); 
   Serial.println("*************************");      
 
-  //xTaskCreate(guiTask, "guiTask", 8096, NULL, 10, &guiTaskHandler); 
-  xTaskCreatePinnedToCore(guiTask, "guiTask", 4096*2, NULL, 0, NULL, 1);     
+  xTaskCreate(guiTask, "guiTask", 8096, NULL, 0, &guiTaskHandler); 
+  //xTaskCreatePinnedToCore(guiTask, "guiTask", 4096*2, NULL, 0, &guiTaskHandler, 0);
+  Serial.println((uint32_t)guiTaskHandler);
+
+  xTaskCreate(networkScanTask, "networkScanTask", 4096, NULL, 0, &networkScanTaskHandler);
+  //xTaskCreatePinnedToCore(networkScanTask, "networkScanTask", 4096*2, NULL, 0, &networkScanTaskHandler, 0);
+  Serial.println((uint32_t)networkScanTaskHandler);   
 }
 
  

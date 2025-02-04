@@ -9,6 +9,7 @@
             "name": "PlatformIO",
             "includePath": [
                 "c:/GitProjects/TEmbededTEST/PlatformIO/src",
+                "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/WiFi/src",
                 "c:/GitProjects/TEmbededTEST/PlatformIO/lib/TFT_eSPI",
                 "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/LittleFS/src",
                 "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/SPIFFS/src",
@@ -238,7 +239,6 @@
                 "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/USB/src",
                 "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/Update/src",
                 "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/WebServer/src",
-                "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/WiFi/src",
                 "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/WiFiClientSecure/src",
                 "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/WiFiProv/src",
                 "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/Wire/src",
@@ -248,6 +248,7 @@
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
                     "c:/GitProjects/TEmbededTEST/PlatformIO/src",
+                    "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/WiFi/src",
                     "c:/GitProjects/TEmbededTEST/PlatformIO/lib/TFT_eSPI",
                     "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/LittleFS/src",
                     "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/SPIFFS/src",
@@ -477,7 +478,6 @@
                     "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/USB/src",
                     "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/Update/src",
                     "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/WebServer/src",
-                    "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/WiFi/src",
                     "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/WiFiClientSecure/src",
                     "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/WiFiProv/src",
                     "C:/Users/CORHA/.platformio/packages/framework-arduinoespressif32@3.20014.231204/libraries/Wire/src",
