@@ -1,6 +1,9 @@
 #include "network.h"
 
 ssidInfo_t networkInfo;
+String connectedPASS="TestPass";
+String connectedSSID="Movu Guest";
+
 
 void networkScanTask(void *param) {
     while(true){

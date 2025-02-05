@@ -14,9 +14,12 @@ struct ssidInfo_t
 
 extern QueueHandle_t networkScanQueueHandle;
 extern TaskHandle_t  networkScanTaskHandle;
-extern bool runNetworkTask;
 
+extern String connectedSSID;
+extern String connectedPASS;
 
+extern String selectedSSID;
+extern String selectedPASS;
 
 void networkScanTask(void *param);
 

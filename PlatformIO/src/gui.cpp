@@ -7,12 +7,16 @@ OneButton Button =  OneButton(PIN_ENCODE_BTN);
 lv_color_t *buf1[ SCREENWIDTH * SCREENHEIGHT]; 
 lv_disp_draw_buf_t draw_buf;
 
+String selectedPASS="";
+String selectedSSID="";
+
 
 
 int guiState = INFOPAGE_STATE;
 
 void guiTask(void *param) {
   ssidInfo_t networkInfo;
+  String dropDownList;
 
   // Turn on lcd
   pinMode(POWER_ON, OUTPUT);
@@ -69,12 +73,26 @@ void guiTask(void *param) {
     RotaryEncoder::Direction direction=Encoder.getDirection();
     if(direction != RotaryEncoder::Direction::NOROTATION) readEncoder(direction);
     Button.tick();
+
+
     switch(guiState){
       case WIFISCANNING_STATE:
         if(uxQueueMessagesWaiting(networkScanQueueHandle)>0){
-          xQueueReceive(networkScanQueueHandle, &networkInfo, portMAX_DELAY);
-          Serial.print("xQueueReceive: ");
-          Serial.println(networkInfo.count);
+          dropDownList="";
+          do {
+            xQueueReceive(networkScanQueueHandle, &networkInfo, portMAX_DELAY);
+            Serial.print("xQueueReceive: ");
+            Serial.println(networkInfo.count);
+            dropDownList=dropDownList+networkInfo.ssidName+"\n";
+          } while (networkInfo.count != 1);
+          lv_obj_add_flag(objects.wifi_spinner, LV_OBJ_FLAG_HIDDEN);
+          Serial.print("list: ");
+          Serial.println(dropDownList); 
+          lv_dropdown_set_options(objects.wifi_ssid_drop_down, dropDownList.c_str());
+          lv_dropdown_open(objects.wifi_ssid_drop_down);
+          lv_group_focus_obj(objects.wifi_ssid_drop_down);        
+          lv_group_set_editing(groups.wifiPageGroup, true);          
+          guiState=WIFISSIDDROP_STATE;                             
         }
         break;
     }
@@ -82,6 +100,8 @@ void guiTask(void *param) {
 }
 
 void buttonClicked(){
+  char selection[33];
+  uint16_t btn;
   switch (guiState){
     case WIFIPAGE_STATE: 
       lv_group_add_obj(groups.wifiPageGroup, objects.wifi_ssid_drop_down);
@@ -91,13 +111,28 @@ void buttonClicked(){
       guiState = WIFISSIDFOCUS_STATE;
       break;
     case WIFISSIDFOCUS_STATE:
-      guiState = WIFISCANNING_STATE;
       lv_obj_clear_flag(objects.wifi_spinner, LV_OBJ_FLAG_HIDDEN);
-// need to start task here
-
       Serial.print("networkScanTaskHandler: ");
       Serial.println(uint32_t(networkScanTaskHandle));
       vTaskResume(networkScanTaskHandle);
+      guiState = WIFISCANNING_STATE;      
+      break;
+    case WIFISSIDDROP_STATE:
+      lv_group_send_data(groups.wifiPageGroup, LV_KEY_ENTER);          
+      lv_dropdown_get_selected_str(objects.wifi_ssid_drop_down, selection, sizeof(selection));
+      //Serial.print("selection: ");
+      //Serial.println(selection);
+      selectedSSID=selection;
+      if(selectedSSID==connectedSSID){
+        selectedPASS==connectedPASS;
+      } else {
+        selectedPASS="New Password";
+      }
+      lv_textarea_set_text(objects.wifi_pass_text, selectedPASS.c_str());
+      lv_group_focus_obj(objects.wifi_ssid_drop_down);
+      //Serial.print("selectedStr: ");
+      //Serial.println(selectedSSID);
+      guiState=WIFISSIDFOCUS_STATE;             
       break;
     case WIFIPASSFOCUS_STATE:
       lv_obj_clear_flag(objects.wifi_pass_input, LV_OBJ_FLAG_HIDDEN);
@@ -108,7 +143,26 @@ void buttonClicked(){
       guiState=WIFIPASSEDIT_STATE;
       break; 
     case WIFIPASSEDIT_STATE:
-        lv_event_send(objects.wifi_pass_keyb, LV_EVENT_VALUE_CHANGED, NULL);     
+      lv_event_send(objects.wifi_pass_keyb, LV_EVENT_VALUE_CHANGED, NULL);      
+      btn=lv_keyboard_get_selected_btn(objects.wifi_pass_keyb);
+      Serial.print("Btn: ");
+      Serial.println(btn);      
+      if(btn==39){// OK btn pressed
+        lv_obj_add_flag(objects.wifi_pass_input, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(objects.wifi_pass_keyb, LV_OBJ_FLAG_HIDDEN);
+        lv_group_focus_obj(objects.wifi_pass_text);        
+        lv_textarea_set_text(objects.wifi_pass_text, lv_textarea_get_text(objects.wifi_pass_input));
+        lv_group_set_editing(groups.wifiPageGroup, false);
+        guiState=WIFIPASSFOCUS_STATE;  
+      }
+      if(btn==35){// Cancel btn pressed}
+        lv_obj_add_flag(objects.wifi_pass_input, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(objects.wifi_pass_keyb, LV_OBJ_FLAG_HIDDEN);
+        lv_group_focus_obj(objects.wifi_pass_text); 
+        lv_group_set_editing(groups.wifiPageGroup, false);
+        guiState=WIFIPASSFOCUS_STATE; 
+      }                          
+      break;    
   }      
 }
 
@@ -156,6 +210,14 @@ void readEncoder(RotaryEncoder::Direction direction){
   case WIFISSIDFOCUS_STATE:
     lv_group_focus_obj(objects.wifi_pass_text);
     guiState=WIFIPASSFOCUS_STATE;      
+    break;
+  case WIFISSIDDROP_STATE:
+    if(direction == RotaryEncoder::Direction::CLOCKWISE){  
+      lv_group_send_data(groups.wifiPageGroup, LV_KEY_UP);       
+    }  
+    if(direction == RotaryEncoder::Direction::COUNTERCLOCKWISE){  
+      lv_group_send_data(groups.wifiPageGroup, LV_KEY_DOWN);       
+    }     
     break;
   case WIFIPASSFOCUS_STATE:
     lv_group_focus_obj(objects.wifi_ssid_drop_down);
