@@ -14,64 +14,14 @@ groups_t groups;
 static bool groups_created = false;
 
 objects_t objects;
-lv_obj_t *tick_value_change_obj;
+//lv_obj_t *tick_value_change_obj;
 
-static void event_handler_cb_wifi_page_wifi_page(lv_event_t *e) {
-    lv_event_code_t event = lv_event_get_code(e);
-    if (event == LV_EVENT_SCREEN_LOAD_START) {
-        // group: wifiPageGroup
-        lv_group_remove_all_objs(groups.wifiPageGroup);
-        //lv_group_add_obj(groups.wifiPageGroup, objects.wifi_ssid_drop_down);
-        //lv_group_add_obj(groups.wifiPageGroup, objects.wifi_pass_text);
-        //lv_group_add_obj(groups.wifiPageGroup, objects.wifi_pass_keyb);
-        //lv_group_add_obj(groups.wifiPageGroup, objects.wifi_pass_input);
-    }
-}
-
-static void event_handler_cb_wifi_page_wifi_ssid_drop_down(lv_event_t *e) {
-    lv_event_code_t event = lv_event_get_code(e);
-    if (event == LV_EVENT_VALUE_CHANGED) {
-        lv_obj_t *ta = lv_event_get_target(e);
-        if (tick_value_change_obj != ta) {
-            int32_t value = lv_dropdown_get_selected(ta);
-            set_var_wifi_ssid_selected(value);
-        }
-    }
-}
-
-static void event_handler_cb_wifi_page_wifi_pass_input(lv_event_t *e) {
-    lv_event_code_t event = lv_event_get_code(e);
-    if (event == LV_EVENT_VALUE_CHANGED) {
-        lv_obj_t *ta = lv_event_get_target(e);
-        if (tick_value_change_obj != ta) {
-            const char *value = lv_textarea_get_text(ta);
-            set_var_wifi_pass_input(value);
-        }
-    }
-}
-
-static void event_handler_cb_info_page_info_page(lv_event_t *e) {
-    lv_event_code_t event = lv_event_get_code(e);
-    if (event == LV_EVENT_SCREEN_LOAD_START) {
-        // group: wifiPageGroup
-        lv_group_remove_all_objs(groups.wifiPageGroup);
-    }
-}
-
-static void event_handler_cb_temp_page_temp_page(lv_event_t *e) {
-    lv_event_code_t event = lv_event_get_code(e);
-    if (event == LV_EVENT_SCREEN_LOAD_START) {
-        // group: wifiPageGroup
-        lv_group_remove_all_objs(groups.wifiPageGroup);
-    }
-}
 
 void create_screen_wifi_page() {
     lv_obj_t *obj = lv_obj_create(0);
     objects.wifi_page = obj;
     lv_obj_set_pos(obj, 0, 0);
     lv_obj_set_size(obj, 320, 170);
-    lv_obj_add_event_cb(obj, event_handler_cb_wifi_page_wifi_page, LV_EVENT_ALL, 0);
     lv_obj_set_style_bg_color(obj, lv_color_hex(0xff000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     {
         lv_obj_t *parent_obj = obj;
@@ -125,7 +75,6 @@ void create_screen_wifi_page() {
             lv_obj_set_pos(obj, 108, 40);
             lv_obj_set_size(obj, 200, 36);
             lv_dropdown_set_options(obj, "");
-            lv_obj_add_event_cb(obj, event_handler_cb_wifi_page_wifi_ssid_drop_down, LV_EVENT_ALL, 0);
             lv_obj_set_style_text_font(obj, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_outline_color(obj, lv_color_hex(0xff0000ff), LV_PART_MAIN | LV_STATE_FOCUSED);
             lv_obj_set_style_outline_width(obj, 5, LV_PART_MAIN | LV_STATE_FOCUSED);
@@ -178,7 +127,6 @@ void create_screen_wifi_page() {
             lv_textarea_set_max_length(obj, 128);
             lv_textarea_set_one_line(obj, true);
             lv_textarea_set_password_mode(obj, false);
-            lv_obj_add_event_cb(obj, event_handler_cb_wifi_page_wifi_pass_input, LV_EVENT_ALL, 0);
             lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
             lv_obj_add_state(obj, LV_STATE_FOCUSED);            
             lv_obj_set_style_border_color(obj, lv_color_hex(0xff0000ff), LV_PART_SELECTED | LV_STATE_DEFAULT);
@@ -196,44 +144,11 @@ void create_screen_wifi_page() {
     lv_keyboard_set_textarea(objects.wifi_pass_keyb, objects.wifi_pass_input);
 }
 
-void tick_screen_wifi_page() {
-    {
-        const char *new_val = get_var_wifi_ssid_list();
-        const char *cur_val = lv_dropdown_get_options(objects.wifi_ssid_drop_down);
-        if (strcmp(new_val, cur_val) != 0) {
-            tick_value_change_obj = objects.wifi_ssid_drop_down;
-            lv_dropdown_set_options(objects.wifi_ssid_drop_down, new_val);
-            tick_value_change_obj = NULL;
-        }
-    }
-    {
-        if (!(lv_obj_get_state(objects.wifi_ssid_drop_down) & LV_STATE_EDITED)) {
-            int32_t new_val = get_var_wifi_ssid_selected();
-            int32_t cur_val = lv_dropdown_get_selected(objects.wifi_ssid_drop_down);
-            if (new_val != cur_val) {
-                tick_value_change_obj = objects.wifi_ssid_drop_down;
-                lv_dropdown_set_selected(objects.wifi_ssid_drop_down, new_val);
-                tick_value_change_obj = NULL;
-            }
-        }
-    }
-    {
-        const char *new_val = get_var_wifi_pass_input();
-        const char *cur_val = lv_textarea_get_text(objects.wifi_pass_input);
-        if (strcmp(new_val, cur_val) != 0) {
-            tick_value_change_obj = objects.wifi_pass_input;
-            lv_textarea_set_text(objects.wifi_pass_input, new_val);
-            tick_value_change_obj = NULL;
-        }
-    }
-}
-
 void create_screen_info_page() {
     lv_obj_t *obj = lv_obj_create(0);
     objects.info_page = obj;
     lv_obj_set_pos(obj, 0, 0);
     lv_obj_set_size(obj, 320, 170);
-    lv_obj_add_event_cb(obj, event_handler_cb_info_page_info_page, LV_EVENT_ALL, 0);
     lv_obj_set_style_bg_color(obj, lv_color_hex(0xff000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     {
         lv_obj_t *parent_obj = obj;
@@ -273,15 +188,11 @@ void create_screen_info_page() {
     }
 }
 
-void tick_screen_info_page() {
-}
-
 void create_screen_temp_page() {
     lv_obj_t *obj = lv_obj_create(0);
     objects.temp_page = obj;
     lv_obj_set_pos(obj, 0, 0);
     lv_obj_set_size(obj, 320, 170);
-    lv_obj_add_event_cb(obj, event_handler_cb_temp_page_temp_page, LV_EVENT_ALL, 0);
     lv_obj_set_style_bg_color(obj, lv_color_hex(0xff000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     {
         lv_obj_t *parent_obj = obj;
@@ -385,28 +296,6 @@ void create_screen_temp_page() {
     }
 }
 
-void tick_screen_temp_page() {
-    {
-        const char *new_val = get_var_actual_temperature();
-        const char *cur_val = lv_label_get_text(objects.setpoint_text);
-        if (strcmp(new_val, cur_val) != 0) {
-            tick_value_change_obj = objects.setpoint_text;
-            lv_label_set_text(objects.setpoint_text, new_val);
-            tick_value_change_obj = NULL;
-        }
-    }
-    {
-        const char *new_val = get_var_actual_temperature();
-        const char *cur_val = lv_label_get_text(objects.actual_text);
-        if (strcmp(new_val, cur_val) != 0) {
-            tick_value_change_obj = objects.actual_text;
-            lv_label_set_text(objects.actual_text, new_val);
-            tick_value_change_obj = NULL;
-        }
-    }
-}
-
-
 void ui_create_groups() {
     if (!groups_created) {
         groups.wifiPageGroup = lv_group_create();
@@ -426,14 +315,3 @@ void create_screens() {
     create_screen_temp_page();
 }
 
-typedef void (*tick_screen_func_t)();
-
-tick_screen_func_t tick_screen_funcs[] = {
-    tick_screen_wifi_page,
-    tick_screen_info_page,
-    tick_screen_temp_page,
-};
-
-void tick_screen(int screen_index) {
-    tick_screen_funcs[screen_index]();
-}

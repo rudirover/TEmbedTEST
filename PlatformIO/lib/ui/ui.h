@@ -20,7 +20,7 @@ extern "C" {
 
 
 void ui_init();
-void ui_tick();
+//void ui_tick();
 
 #if !defined(EEZ_FOR_LVGL)
 void loadScreen(enum ScreensEnum screenId, lv_scr_load_anim_t anim);

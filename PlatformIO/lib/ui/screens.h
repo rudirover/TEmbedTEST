@@ -9,7 +9,6 @@ extern "C" {
 
 typedef struct _groups_t {
     lv_group_t *wifiPageGroup;
-    lv_group_t *wifiPageInputGroup;
 } groups_t;
 
 extern groups_t groups;
@@ -56,16 +55,9 @@ enum ScreensEnum {
 };
 
 void create_screen_wifi_page();
-void tick_screen_wifi_page();
-
 void create_screen_info_page();
-void tick_screen_info_page();
-
 void create_screen_temp_page();
-void tick_screen_temp_page();
-
 void create_screens();
-void tick_screen(int screen_index);
 
 
 #ifdef __cplusplus

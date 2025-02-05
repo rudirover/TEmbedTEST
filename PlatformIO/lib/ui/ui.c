@@ -49,8 +49,10 @@ void ui_init() {
     loadScreen(SCREEN_ID_INFO_PAGE, LV_SCR_LOAD_ANIM_FADE_IN);
 }
 
+/*
 void ui_tick() {
     tick_screen(currentScreen);
 }
+*/
 
 #endif
