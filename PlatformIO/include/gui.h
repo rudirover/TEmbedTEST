@@ -11,7 +11,7 @@
 #include "actions.h"
 #include "network.h"
 
-extern TaskHandle_t  guiTaskHandler;
+extern TaskHandle_t  guiTaskHandle;
 
 #define POWER_ON 46
 #define PIN_ENCODE_A          2

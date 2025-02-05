@@ -7,9 +7,12 @@ OneButton Button =  OneButton(PIN_ENCODE_BTN);
 lv_color_t *buf1[ SCREENWIDTH * SCREENHEIGHT]; 
 lv_disp_draw_buf_t draw_buf;
 
+
+
 int guiState = INFOPAGE_STATE;
 
 void guiTask(void *param) {
+  ssidInfo_t networkInfo;
 
   // Turn on lcd
   pinMode(POWER_ON, OUTPUT);
@@ -66,6 +69,15 @@ void guiTask(void *param) {
     RotaryEncoder::Direction direction=Encoder.getDirection();
     if(direction != RotaryEncoder::Direction::NOROTATION) readEncoder(direction);
     Button.tick();
+    switch(guiState){
+      case WIFISCANNING_STATE:
+        if(uxQueueMessagesWaiting(networkScanQueueHandle)>0){
+          xQueueReceive(networkScanQueueHandle, &networkInfo, portMAX_DELAY);
+          Serial.print("xQueueReceive: ");
+          Serial.println(networkInfo.count);
+        }
+        break;
+    }
   }
 }
 
@@ -84,8 +96,8 @@ void buttonClicked(){
 // need to start task here
 
       Serial.print("networkScanTaskHandler: ");
-      Serial.println(uint32_t(networkScanTaskHandler));
-      vTaskResume(networkScanTaskHandler);
+      Serial.println(uint32_t(networkScanTaskHandle));
+      vTaskResume(networkScanTaskHandle);
       break;
     case WIFIPASSFOCUS_STATE:
       lv_obj_clear_flag(objects.wifi_pass_input, LV_OBJ_FLAG_HIDDEN);

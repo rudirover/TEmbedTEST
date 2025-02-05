@@ -1,5 +1,7 @@
 #include "network.h"
 
+ssidInfo_t networkInfo;
+
 void networkScanTask(void *param) {
     while(true){
         vTaskSuspend(NULL);       
@@ -16,11 +18,19 @@ void networkScanTask(void *param) {
         if (n == 0) {
             Serial.println("no networks found");
         } else {
+            networkInfo.count=n;
             Serial.print(n);
             Serial.println(" networks found");
             Serial.println("Nr | SSID                             | RSSI | CH | Encryption");
             for (int i = 0; i < n; ++i) {
                 // Print SSID and RSSI for each network found
+                Serial.print("size netWorkInfo: ");
+                Serial.println(sizeof(networkInfo));
+                networkInfo.count=(n - i);
+                networkInfo.auth=WiFi.encryptionType(i);
+                strcpy(networkInfo.ssidName, WiFi.SSID(i).c_str());
+                xQueueSend(networkScanQueueHandle, (void *) &networkInfo, portMAX_DELAY);
+
                 Serial.printf("%2d",i + 1);
                 Serial.print(" | ");
                 Serial.printf("%-32.32s", WiFi.SSID(i).c_str());
