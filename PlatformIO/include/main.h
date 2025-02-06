@@ -3,7 +3,6 @@
 
 #include "network.h"
 #include "gui.h"
-#include "vars.h"
 
 
 

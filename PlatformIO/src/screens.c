@@ -1,14 +1,7 @@
 #include <string.h>
-
 #include "screens.h"
 #include "images.h"
-#include "fonts.h"
-#include "actions.h"
-#include "vars.h"
-#include "styles.h"
 #include "ui.h"
-
-#include <string.h>
 
 groups_t groups;
 static bool groups_created = false;
@@ -73,9 +66,9 @@ void create_screen_wifi_page() {
             lv_obj_t *obj = lv_dropdown_create(parent_obj);
             objects.wifi_ssid_drop_down = obj;
             lv_obj_set_pos(obj, 108, 40);
-            lv_obj_set_size(obj, 200, 36);
+            lv_obj_set_size(obj, 200, 24);
             lv_dropdown_set_options(obj, "");
-            lv_obj_set_style_text_font(obj, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_font(obj, &lv_font_montserrat_10, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_outline_color(obj, lv_color_hex(0xff0000ff), LV_PART_MAIN | LV_STATE_FOCUSED);
             lv_obj_set_style_outline_width(obj, 5, LV_PART_MAIN | LV_STATE_FOCUSED);
             lv_obj_set_style_outline_color(obj, lv_color_hex(0xff0000ff), LV_PART_SELECTED | LV_STATE_FOCUSED);
@@ -96,14 +89,14 @@ void create_screen_wifi_page() {
             lv_obj_t *obj = lv_textarea_create(parent_obj);
             objects.wifi_pass_text = obj;
             lv_obj_set_pos(obj, 109, 83);
-            lv_obj_set_size(obj, 200, 36);
+            lv_obj_set_size(obj, 200, 24);
             lv_textarea_set_max_length(obj, 128);
             lv_textarea_set_text(obj, "PassWord");
             lv_textarea_set_placeholder_text(obj, "******************");
             lv_textarea_set_one_line(obj, true);
             lv_textarea_set_password_mode(obj, true); 
             lv_obj_clear_state(obj, LV_STATE_FOCUSED);                     
-            lv_obj_set_style_text_font(obj, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_font(obj, &lv_font_montserrat_10, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_outline_width(obj, 5, LV_PART_MAIN | LV_STATE_FOCUSED);
             lv_obj_set_style_outline_color(obj, lv_color_hex(0xff0000ff), LV_PART_MAIN | LV_STATE_FOCUSED);
             lv_obj_set_style_outline_width(obj, 5, LV_PART_SELECTED | LV_STATE_FOCUSED);
