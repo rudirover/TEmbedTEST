@@ -55,7 +55,7 @@ void create_screen_wifi_page() {
             // wifiSSIDLabel
             lv_obj_t *obj = lv_label_create(parent_obj);
             objects.wifi_ssid_label = obj;
-            lv_obj_set_pos(obj, 16, 49);
+            lv_obj_set_pos(obj, 16, 40);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_label_set_text(obj, "WIFI SSID:");
             lv_obj_set_style_text_color(obj, lv_color_hex(0xffffffff), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -65,10 +65,10 @@ void create_screen_wifi_page() {
             // wifiSSIDDropDown
             lv_obj_t *obj = lv_dropdown_create(parent_obj);
             objects.wifi_ssid_drop_down = obj;
-            lv_obj_set_pos(obj, 108, 40);
-            lv_obj_set_size(obj, 200, 24);
+            lv_obj_set_pos(obj, 108, 32);
+            lv_obj_set_size(obj, 200, 32);
             lv_dropdown_set_options(obj, "");
-            lv_obj_set_style_text_font(obj, &lv_font_montserrat_10, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_font(obj, &lv_font_montserrat_12, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_outline_color(obj, lv_color_hex(0xff0000ff), LV_PART_MAIN | LV_STATE_FOCUSED);
             lv_obj_set_style_outline_width(obj, 5, LV_PART_MAIN | LV_STATE_FOCUSED);
             lv_obj_set_style_outline_color(obj, lv_color_hex(0xff0000ff), LV_PART_SELECTED | LV_STATE_FOCUSED);
@@ -78,7 +78,7 @@ void create_screen_wifi_page() {
             // wifiPASSLabel
             lv_obj_t *obj = lv_label_create(parent_obj);
             objects.wifi_pass_label = obj;
-            lv_obj_set_pos(obj, 16, 92);
+            lv_obj_set_pos(obj, 16, 80);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_label_set_text(obj, "WIFI PASS:");
             lv_obj_set_style_text_color(obj, lv_color_hex(0xffffffff), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -88,15 +88,15 @@ void create_screen_wifi_page() {
             // wifiPASSText
             lv_obj_t *obj = lv_textarea_create(parent_obj);
             objects.wifi_pass_text = obj;
-            lv_obj_set_pos(obj, 109, 83);
-            lv_obj_set_size(obj, 200, 24);
+            lv_obj_set_pos(obj, 109, 72);
+            lv_obj_set_size(obj, 200, 32);
             lv_textarea_set_max_length(obj, 128);
             lv_textarea_set_text(obj, "PassWord");
             lv_textarea_set_placeholder_text(obj, "******************");
             lv_textarea_set_one_line(obj, true);
             lv_textarea_set_password_mode(obj, true); 
             lv_obj_clear_state(obj, LV_STATE_FOCUSED);                     
-            lv_obj_set_style_text_font(obj, &lv_font_montserrat_10, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_font(obj, &lv_font_montserrat_12, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_outline_width(obj, 5, LV_PART_MAIN | LV_STATE_FOCUSED);
             lv_obj_set_style_outline_color(obj, lv_color_hex(0xff0000ff), LV_PART_MAIN | LV_STATE_FOCUSED);
             lv_obj_set_style_outline_width(obj, 5, LV_PART_SELECTED | LV_STATE_FOCUSED);
@@ -126,13 +126,29 @@ void create_screen_wifi_page() {
             lv_obj_set_style_border_color(obj, lv_color_hex(0xff0000ff), LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_border_color(obj, lv_color_hex(0xff0000ff), LV_PART_CURSOR | LV_STATE_DEFAULT);
         }
-        {
+        {   // wifiBUSYSpinner
             lv_obj_t *obj = lv_spinner_create(parent_obj, 1000, 60);
             objects.wifi_spinner = obj;            
             lv_obj_set_pos(obj, 120, 45);
             lv_obj_set_size(obj, 80, 80);
             lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-        }        
+        } 
+        {   //wifiCONNECTBtn
+            lv_obj_t *obj = lv_btn_create(parent_obj);
+            lv_obj_set_pos(obj, 105, 120);
+            lv_obj_set_size(obj, 100, 32);
+            lv_obj_add_flag(obj, LV_OBJ_FLAG_CHECKABLE);
+            {
+                lv_obj_t *parent_obj = obj;
+                {
+                    lv_obj_t *obj = lv_label_create(parent_obj);
+                    lv_obj_set_pos(obj, 0, 0);
+                    lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+                    lv_label_set_text(obj, "CONNECT");
+                    lv_obj_set_style_align(obj, LV_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+                }
+            }
+        }               
     }
     lv_keyboard_set_textarea(objects.wifi_pass_keyb, objects.wifi_pass_input);
 }
